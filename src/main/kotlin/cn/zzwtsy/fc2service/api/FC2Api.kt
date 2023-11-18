@@ -1,7 +1,10 @@
 package cn.zzwtsy.fc2service.api
 
+import cn.zzwtsy.fc2service.utils.HttpUtil
+import okhttp3.Headers
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.util.*
 
 
 /**
@@ -14,8 +17,8 @@ class FC2Api {
     companion object {
         // 定义 API_URL 常量
         private const val FC2_API_URL = "https://adult.contents.fc2.com/article/"
-
-        // private const val FC2HUB_API_URL = "https://fc2hub.com/search?kw="
+        private const val FC2HUB_API_URL = "https://fc2hub.com/search?kw="
+        private const val ITEMS_NOTFOUND_XPATH = "/html/body/div[3]/div/div[1]"
         private val userAgent = listOf(
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0",
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
@@ -71,34 +74,60 @@ class FC2Api {
     }
 
     /**
-     * 获取 FC2 视频页面 url
-     * @param [fc2ID] FC2 id
-     * @return [String]
-     */
-    @Throws(IllegalArgumentException::class)
-    private fun getFC2VideoUrl(fc2ID: Long): String {
-        if (fc2ID.toString().length != 7) {
-            // 抛出异常，提示 fc2ID 不是有效的 FC2 id
-            throw IllegalArgumentException("FC2ID is not a valid FC2 id")
-        }
-        // 返回拼接后的 Article URL
-        return "$FC2_API_URL${fc2ID}/"
-    }
-
-    /**
      * 获取 FC2 视频页面 html
      * @param [fc2ID] FC2 id
      * @return [Document]
      */
-    fun getFC2VideoPageHtml(fc2ID: Long): Document? {
-        val fC2VideoUrl = getFC2VideoUrl(fc2ID)
-        val body = Jsoup.connect(fC2VideoUrl).ignoreContentType(true).execute().body()
-        val parse = Jsoup.parse(body)
-        val countryUnsupported = parse.selectXpath("/html/body/div[3]/div/div[1]/h3").text()
-        return if (countryUnsupported.isNotEmpty()) {
+    fun getFc2VideoPageHtml(fc2ID: Long): Document? {
+        val fc2VideoUrl = getFc2VideoUrl(fc2ID)
+        val sendGet = HttpUtil.sendGet(fc2VideoUrl, headers = getFc2VideoPageHeaders())
+        val body = sendGet.body
+        if (!sendGet.isSuccessful || body == null) return null
+        val parse = Jsoup.parse(body.string())
+        val itemsNotfound = parse.selectXpath(ITEMS_NOTFOUND_XPATH)
+        return if (itemsNotfound.isEmpty()) {
             null
         } else {
             parse
+        }
+    }
+
+    fun getFc2HubVideoPageHtml(fc2ID: Long): Document? {
+        val fc2HubVideoUrl = getFc2HubVideoUrl(fc2ID)
+        val sendGet = HttpUtil.sendGet(fc2HubVideoUrl, headers = getFc2VideoPageHeaders())
+        val body = sendGet.body
+        if (!sendGet.isSuccessful || body == null) return null
+        return Jsoup.parse(body.string())
+    }
+
+    private fun getFc2VideoPageHeaders(): Headers {
+        return Headers.headersOf(
+            "User-Agent",
+            userAgent[Random().nextInt(userAgent.size)]
+        )
+    }
+
+    /**
+     * 获取 FC2 视频页面 url
+     * @param [fc2ID] FC2 id
+     * @return [String]
+     */
+    private fun getFc2VideoUrl(fc2ID: Long): String {
+        if (!isFc2Id(fc2ID)) return ""
+        // 返回拼接后的 Article URL
+        return "$FC2_API_URL${fc2ID}/"
+    }
+
+    private fun getFc2HubVideoUrl(fc2ID: Long): String {
+        if (!isFc2Id(fc2ID)) return ""
+        return "${FC2HUB_API_URL}/$fc2ID"
+    }
+
+    private fun isFc2Id(fc2ID: Long): Boolean {
+        return if (fc2ID.toString().length != 7) {
+            false
+        } else {
+            true
         }
     }
 }
