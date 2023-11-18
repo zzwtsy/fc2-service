@@ -3,22 +3,22 @@ package cn.zzwtsy.fc2service.service
 import cn.zzwtsy.fc2service.api.RSSApi
 import cn.zzwtsy.fc2service.dto.NyaaFc2VideoInfoDto
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class RSSService {
     companion object {
-        private val FC2_ID_REGEX = "^FC2-PPV-\\d+\$".toRegex()
+        private val FC2_ID_REGEX = Regex("^FC2-PPV-\\d+\$", RegexOption.IGNORE_CASE)
     }
 
     fun parseRSS() {
         val nyaaFc2VideoInfoList: MutableList<NyaaFc2VideoInfoDto> = mutableListOf()
 
-        val rss = RSSApi().getRSS()
-        rss.entries.forEach { item ->
-            val title = item.title
-            val infoHash = item.foreignMarkup.find { it.name == "infoHash" }?.text
-            nyaaFc2VideoInfoList.add(NyaaFc2VideoInfoDto(getFc2Id(title), title, getMagnetLink(infoHash)))
+        RSSApi().getRSS()?.let { rss ->
+            rss.entries.forEach { item ->
+                val title = item.title
+                val infoHash = item.foreignMarkup.find { it.name == "infoHash" }?.text
+                nyaaFc2VideoInfoList.add(NyaaFc2VideoInfoDto(getFc2Id(title), title, getMagnetLink(infoHash)))
+            }
         }
     }
 
@@ -30,8 +30,7 @@ class RSSService {
 
     private fun getFc2Id(title: String?): String {
         if (title.isNullOrEmpty()) return ""
-        val uppercase = title.uppercase(Locale.getDefault())
-        val fc2Id = FC2_ID_REGEX.find(uppercase)?.value
+        val fc2Id = FC2_ID_REGEX.find(title)?.value
 
         return fc2Id ?: ""
     }
