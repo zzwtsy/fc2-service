@@ -1,0 +1,32 @@
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force-response: true
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: FC2Service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.2.187:3306/fc2_service
+    username: root
+    password: mysql_AXXJRF
+  jpa:
+    show-sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: none
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+#  security:
+#    user:
+#      name: admin
+#      password: 2001
+#      roles: admin
