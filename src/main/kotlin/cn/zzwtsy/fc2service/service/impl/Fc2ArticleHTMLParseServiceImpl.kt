@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * 1. 部分视频锁地区无法获取视频信息
  * 2. fc2 视频会出现下架
  *
- * 所以需要其他 fc2 视频网站补充确实视频的信息
+ * 所以需要其他 fc2 视频网站补充缺失视频的信息
  * @author zzwtsy
  * @date 2023/11/15
  * @constructor 创建[Fc2ArticleHTMLParseServiceImpl]
@@ -23,7 +23,7 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
         private const val STUDIO_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/ul/li[3]/a"
         private const val RELEASE_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/div[2]/p"
         private const val RUNTIME_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[1]/span/p"
-        private const val DIRECTOR_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/ul/li[3]/a"
+        private const val SELLER_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/ul/li[3]/a"
         private const val ACTOR_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/ul/li[3]/a"
         private const val COVER_XPATH = "//div[@class='items_article_MainitemThumb']/span/img"
         private const val PREVIEW_PICTURES_XPATH = "//ul[@class=\"items_article_SampleImagesArea\"]/li/a"
@@ -44,7 +44,7 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
         val studio = html.selectXpath(STUDIO_XPATH).text()
         val release = html.selectXpath(RELEASE_XPATH).text()
         val runtime = html.selectXpath(RUNTIME_XPATH).text()
-        val director = html.selectXpath(DIRECTOR_XPATH).text()
+        val seller = html.selectXpath(SELLER_XPATH).text()
         val actor = html.selectXpath(ACTOR_XPATH).text()
         val cover = html.selectXpath(COVER_XPATH).attr("src")
         val previewPictures = html.selectXpath(PREVIEW_PICTURES_XPATH).map { it.attr("href") }
@@ -55,7 +55,7 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
                 studio: $studio
                 release: $release
                 runtime: $runtime
-                director: $director
+                director: $seller
                 actor: $actor
                 cover: $cover
                 previewPictures: $previewPictures
