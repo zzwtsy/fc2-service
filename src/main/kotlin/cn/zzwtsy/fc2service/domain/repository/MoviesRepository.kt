@@ -1,7 +1,6 @@
 package cn.zzwtsy.fc2service.domain.repository
 
 import cn.zzwtsy.fc2service.domain.modle.Movies
-import cn.zzwtsy.fc2service.dto.MoviesDto
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 
