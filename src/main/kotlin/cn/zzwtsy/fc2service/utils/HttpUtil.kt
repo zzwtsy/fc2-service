@@ -1,10 +1,16 @@
 package cn.zzwtsy.fc2service.utils
 
 import okhttp3.*
+import okhttp3.brotli.BrotliInterceptor
 import java.util.concurrent.TimeUnit
 
 object HttpUtil {
-    private val client = OkHttpClient.Builder().readTimeout(5, TimeUnit.SECONDS).build()
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(BrotliInterceptor)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .build()
 
     /**
      * 发送 Get 请求
