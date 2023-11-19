@@ -3,8 +3,10 @@ package cn.zzwtsy.fc2service.api
 import cn.zzwtsy.fc2service.utils.HttpUtil
 import okhttp3.FormBody
 import okhttp3.Headers.Companion.headersOf
+import org.springframework.stereotype.Component
 import java.util.*
 
+@Component
 class GithubApi {
     companion object {
         private const val GITHUB_API = "https://api.github.com/repos/"

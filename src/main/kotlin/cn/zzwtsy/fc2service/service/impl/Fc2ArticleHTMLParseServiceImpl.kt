@@ -1,6 +1,7 @@
 package cn.zzwtsy.fc2service.service.impl
 
 import cn.zzwtsy.fc2service.service.Fc2ArticleHTMLParseService
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.nodes.Document
 import org.springframework.stereotype.Service
 
@@ -19,12 +20,10 @@ import org.springframework.stereotype.Service
 @Service
 class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
     companion object {
+        private val logger = KotlinLogging.logger { }
         private const val TITLE_XPATH = "/html/head/title"
-        private const val STUDIO_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/ul/li[3]/a"
-        private const val RELEASE_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/div[2]/p"
-        private const val RUNTIME_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[1]/span/p"
         private const val SELLER_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/ul/li[3]/a"
-        private const val ACTOR_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/ul/li[3]/a"
+        private const val RELEASE_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/div[2]/p"
         private const val COVER_XPATH = "//div[@class='items_article_MainitemThumb']/span/img"
         private const val PREVIEW_PICTURES_XPATH = "//ul[@class=\"items_article_SampleImagesArea\"]/li/a"
         private const val TAGS_XPATH = "//a[@class='tag tagTag']"
@@ -35,33 +34,109 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
      * @param [html] html
      * @return [String]
      */
-    override fun parse(html: Document?): String {
-        if (html == null) {
-            println("非常抱歉，此商品未在您的居住国家公开。")
-            return ""
-        }
-        val title = html.selectXpath(TITLE_XPATH).text()
-        val studio = html.selectXpath(STUDIO_XPATH).text()
-        val release = html.selectXpath(RELEASE_XPATH).text()
-        val runtime = html.selectXpath(RUNTIME_XPATH).text()
-        val seller = html.selectXpath(SELLER_XPATH).text()
-        val actor = html.selectXpath(ACTOR_XPATH).text()
-        val cover = html.selectXpath(COVER_XPATH).attr("src")
-        val previewPictures = html.selectXpath(PREVIEW_PICTURES_XPATH).map { it.attr("href") }
-        val tags = html.selectXpath(TAGS_XPATH).text().split(" ")
+    override fun parse(html: Document): String {
+        val title = getTitle(html)
+        val releaseDate = getReleaseDate(html)
+        val seller = getSeller(html)
+        val cover = getCover(html)
+        val previewPictures = getPreviewPictures(html)
+        val tags = getTags(html)
         println(
             """
                 title: $title
-                studio: $studio
-                release: $release
-                runtime: $runtime
-                director: $seller
-                actor: $actor
+                release: $releaseDate
+                seller: $seller
                 cover: $cover
                 previewPictures: $previewPictures
                 tags: $tags
             """.trimIndent()
         )
+
         return ""
+    }
+
+    /**
+     * 获取标题
+     * @param [html] html
+     * @return [String]
+     */
+    override fun getTitle(html: Document): String {
+        return try {
+            html.selectXpath(TITLE_XPATH).text()
+        } catch (e: Exception) {
+            logger.error(e) { "获取标题失败" }
+            ""
+        }
+    }
+
+    /**
+     * 获取标签
+     * @param [html] html
+     * @return [List<String>]
+     */
+    override fun getTags(html: Document): List<String> {
+        return try {
+            html.selectXpath(TAGS_XPATH).map { it.text() }
+        } catch (e: Exception) {
+            logger.error(e) { "获取标签失败" }
+            listOf()
+        }
+    }
+
+    /**
+     * 获取卖家
+     * @param [html] html
+     * @return [String]
+     */
+    override fun getSeller(html: Document): String {
+        return try {
+            html.selectXpath(SELLER_XPATH).text()
+        } catch (e: Exception) {
+            logger.error(e) { "获取卖家失败" }
+            ""
+        }
+    }
+
+    /**
+     * 获取封面
+     * @param [html] html
+     * @return [String]
+     */
+    override fun getCover(html: Document): String {
+        return try {
+            html.selectXpath(COVER_XPATH).attr("src")
+        } catch (e: Exception) {
+            logger.error(e) { "获取封面失败" }
+            ""
+
+        }
+    }
+
+    /**
+     * 获取预览图片
+     * @param [html] html
+     * @return [List<String>]
+     */
+    override fun getPreviewPictures(html: Document): List<String> {
+        return try {
+            html.selectXpath(PREVIEW_PICTURES_XPATH).map { it.attr("href") }
+        } catch (e: Exception) {
+            logger.error(e) { "获取预览图片失败" }
+            listOf()
+        }
+    }
+
+    /**
+     * 获取发布日期
+     * @param [html] html
+     * @return [String]
+     */
+    override fun getReleaseDate(html: Document): String {
+        return try {
+            html.selectXpath(RELEASE_XPATH).text()
+        } catch (e: Exception) {
+            logger.error(e) { "获取发布日期失败" }
+            ""
+        }
     }
 }

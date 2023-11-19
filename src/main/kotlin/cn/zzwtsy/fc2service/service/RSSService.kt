@@ -10,16 +10,17 @@ class RSSService {
         private val FC2_ID_REGEX = Regex("^FC2-PPV-\\d+\$", RegexOption.IGNORE_CASE)
     }
 
-    fun parseRSS() {
+    fun parseRSS(): MutableList<NyaaFc2VideoInfoDto> {
         val nyaaFc2VideoInfoList: MutableList<NyaaFc2VideoInfoDto> = mutableListOf()
 
         RSSApi().getRSS()?.let { rss ->
             rss.entries.forEach { item ->
                 val title = item.title
                 val infoHash = item.foreignMarkup.find { it.name == "infoHash" }?.text
-                nyaaFc2VideoInfoList.add(NyaaFc2VideoInfoDto(getFc2Id(title), title, getMagnetLink(infoHash)))
+                nyaaFc2VideoInfoList.add(NyaaFc2VideoInfoDto(getFc2Id(title), getMagnetLink(infoHash)))
             }
         }
+        return nyaaFc2VideoInfoList
     }
 
     private fun getMagnetLink(hash: String?): String {

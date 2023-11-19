@@ -1,26 +1,24 @@
 package cn.zzwtsy.fc2service.domain.modle
 
-import cn.zzwtsy.fc2service.dto.MovieMagnetLinkDto
 import jakarta.persistence.*
+import org.hibernate.annotations.Comment
 
-@Entity
-@Table(name = "movie_magnet_links", schema = "fc2_service")
+@Entity(name = "Movie_Magnet_Link")
+@Table(name = "movie_magnet_links")
 open class MovieMagnetLink {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "linkId", nullable = false)
-    open var id: Int = -1
+    @Comment("磁力链接唯一标识ID")
+    @Column(name = "link_id", nullable = false)
+    open var id: Int? = null
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fc2Id")
-    open var fc2Id: Movies? = null
+    @MapsId("fc2Id")
+    @Comment("FC2 视频ID")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "fc2_id")
+    open var fc2Id: Movie? = null
 
-    @Column(name = "magnetLink", nullable = false)
+    @Comment("磁力链接")
+    @Column(name = "magnet_link", nullable = false)
     open var magnetLink: String? = null
-
-    fun toDto(): MovieMagnetLinkDto {
-        return MovieMagnetLinkDto(
-            magnetLink = this.magnetLink
-        )
-    }
 }

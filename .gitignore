@@ -19,7 +19,7 @@ bin/
 
 ### IntelliJ IDEA ###
 .idea/
-/*.iml
+*.iml
 
 ### NetBeans ###
 /nbproject/private/

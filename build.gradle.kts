@@ -30,6 +30,7 @@ dependencies {
     // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:okhttp-brotli:4.11.0")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.0.0")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.0.4")
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.0")
