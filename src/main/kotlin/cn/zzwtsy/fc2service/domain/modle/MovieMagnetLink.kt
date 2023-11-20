@@ -1,5 +1,6 @@
 package cn.zzwtsy.fc2service.domain.modle
 
+import cn.zzwtsy.fc2service.dto.MovieMagnetLinkDto
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 
@@ -21,4 +22,10 @@ open class MovieMagnetLink {
     @Comment("磁力链接")
     @Column(name = "magnet_link", nullable = false)
     open var magnetLink: String? = null
+
+    fun toDto(): MovieMagnetLinkDto {
+        return MovieMagnetLinkDto(
+            this.magnetLink
+        )
+    }
 }

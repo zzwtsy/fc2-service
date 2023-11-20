@@ -1,5 +1,6 @@
 package cn.zzwtsy.fc2service.domain.modle
 
+import cn.zzwtsy.fc2service.dto.PreviewPictureDto
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 
@@ -18,4 +19,10 @@ open class PreviewPicture {
 
     @ManyToMany(mappedBy = "previewPictures")
     open var movies: MutableSet<Movie> = mutableSetOf()
+
+    fun toDto(): PreviewPictureDto {
+        return PreviewPictureDto(
+            this.previewPicture
+        )
+    }
 }

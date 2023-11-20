@@ -1,5 +1,6 @@
 package cn.zzwtsy.fc2service.domain.modle
 
+import cn.zzwtsy.fc2service.dto.SellerDto
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 
@@ -18,4 +19,10 @@ open class Seller {
 
     @ManyToMany(mappedBy = "sellers")
     open var movies: MutableSet<Movie> = mutableSetOf()
+
+    fun toDto(): SellerDto {
+        return SellerDto(
+            this.name
+        )
+    }
 }
