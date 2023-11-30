@@ -1,4 +1,4 @@
-package cn.zzwtsy.fc2service.domain.modle
+package cn.zzwtsy.fc2service.dao.entity
 
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment

@@ -1,8 +1,11 @@
 package cn.zzwtsy.fc2service.service.impl
 
+import cn.zzwtsy.fc2service.api.Fc2Api
+import cn.zzwtsy.fc2service.dto.Fc2VideoInfoDto
 import cn.zzwtsy.fc2service.service.Fc2ArticleHTMLParseService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.nodes.Document
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 /**
@@ -19,40 +22,41 @@ import org.springframework.stereotype.Service
  */
 @Service
 class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
-    companion object {
-        private val logger = KotlinLogging.logger { }
-        private const val TITLE_XPATH = "/html/head/title"
-        private const val SELLER_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/ul/li[3]/a"
-        private const val RELEASE_XPATH = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/div[2]/p"
-        private const val COVER_XPATH = "//div[@class='items_article_MainitemThumb']/span/img"
-        private const val PREVIEW_PICTURES_XPATH = "//ul[@class=\"items_article_SampleImagesArea\"]/li/a"
-        private const val TAGS_XPATH = "//a[@class='tag tagTag']"
-    }
+    private val logger = KotlinLogging.logger { }
+
+    private val titleXpath = "/html/head/title"
+    private val sellerXpath = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/ul/li/a"
+    private val releaseXpath = "//*[@id=\"top\"]/div[1]/section[1]/div/section/div[2]/div[2]/p"
+    private val coverXpath = "//div[@class='items_article_MainitemThumb']/span/img"
+    private val previewPicturesXpath = "//ul[@class=\"items_article_SampleImagesArea\"]/li/a"
+    private val tagsXpath = "//a[@class='tag tagTag']"
+    private val fc2Regex = Regex("FC2-PPV-\\d+", RegexOption.IGNORE_CASE)
+    private val dateRegex = Regex("\\d{4}/\\d{2}/\\d{2}")
+
+    @Autowired
+    private lateinit var fc2Api: Fc2Api
 
     /**
      * 解析
-     * @param [html] html
+     * @param [fc2Id] FC2 ID
      * @return [String]
      */
-    override fun parse(html: Document): String {
-        val title = getTitle(html)
-        val releaseDate = getReleaseDate(html)
-        val seller = getSeller(html)
-        val cover = getCover(html)
-        val previewPictures = getPreviewPictures(html)
-        val tags = getTags(html)
-        println(
-            """
-                title: $title
-                release: $releaseDate
-                seller: $seller
-                cover: $cover
-                previewPictures: $previewPictures
-                tags: $tags
-            """.trimIndent()
+    override fun parse(fc2Id: String): Fc2VideoInfoDto? {
+        val fc2videoHtml = fc2Api.getFc2VideoPageHtmlByFc2Id(fc2Id) ?: return null
+        val title = getTitle(fc2videoHtml)
+        val releaseDate = getReleaseDate(fc2videoHtml)
+        val seller = getSeller(fc2videoHtml)
+        val cover = getCover(fc2videoHtml)
+        val previewPictures = getPreviewPictures(fc2videoHtml)
+        val tags = getTags(fc2videoHtml)
+        return Fc2VideoInfoDto(
+            title = title,
+            releaseDate = releaseDate,
+            seller = seller,
+            cover = cover,
+            previewPictures = previewPictures,
+            tags = tags
         )
-
-        return ""
     }
 
     /**
@@ -62,7 +66,8 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
      */
     override fun getTitle(html: Document): String {
         return try {
-            html.selectXpath(TITLE_XPATH).text()
+            html.selectXpath(titleXpath).text()
+                .replace(fc2Regex, "").trim()
         } catch (e: Exception) {
             logger.error(e) { "获取标题失败" }
             ""
@@ -76,10 +81,10 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
      */
     override fun getTags(html: Document): List<String> {
         return try {
-            html.selectXpath(TAGS_XPATH).map { it.text() }
+            html.selectXpath(tagsXpath).map { it.text() }
         } catch (e: Exception) {
             logger.error(e) { "获取标签失败" }
-            listOf()
+            emptyList()
         }
     }
 
@@ -90,7 +95,7 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
      */
     override fun getSeller(html: Document): String {
         return try {
-            html.selectXpath(SELLER_XPATH).text()
+            html.selectXpath(sellerXpath).text()
         } catch (e: Exception) {
             logger.error(e) { "获取卖家失败" }
             ""
@@ -104,7 +109,8 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
      */
     override fun getCover(html: Document): String {
         return try {
-            html.selectXpath(COVER_XPATH).attr("src")
+            val attr = html.selectXpath(coverXpath).attr("src")
+            "https:${attr}"
         } catch (e: Exception) {
             logger.error(e) { "获取封面失败" }
             ""
@@ -119,10 +125,10 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
      */
     override fun getPreviewPictures(html: Document): List<String> {
         return try {
-            html.selectXpath(PREVIEW_PICTURES_XPATH).map { it.attr("href") }
+            html.selectXpath(previewPicturesXpath).map { "https:${it.attr("href")}" }
         } catch (e: Exception) {
             logger.error(e) { "获取预览图片失败" }
-            listOf()
+            emptyList()
         }
     }
 
@@ -133,7 +139,8 @@ class Fc2ArticleHTMLParseServiceImpl : Fc2ArticleHTMLParseService {
      */
     override fun getReleaseDate(html: Document): String {
         return try {
-            html.selectXpath(RELEASE_XPATH).text()
+            val text = html.selectXpath(releaseXpath).text()
+            dateRegex.find(text)?.value ?: ""
         } catch (e: Exception) {
             logger.error(e) { "获取发布日期失败" }
             ""

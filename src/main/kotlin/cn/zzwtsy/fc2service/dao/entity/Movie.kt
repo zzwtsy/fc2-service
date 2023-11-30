@@ -1,9 +1,7 @@
-package cn.zzwtsy.fc2service.domain.modle
+package cn.zzwtsy.fc2service.dao.entity
 
-import cn.zzwtsy.fc2service.dto.MovieDto
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
-import java.time.Instant
 import java.time.LocalDate
 
 @Comment("FC2 视频表，存储每部 FC2 视频的一般信息")
@@ -23,10 +21,10 @@ open class Movie {
     @Column(name = "release_date")
     open var releaseDate: LocalDate? = null
 
-    @OneToMany(mappedBy = "fc2Id")
+    @OneToMany(mappedBy = "movie", cascade = [CascadeType.ALL], orphanRemoval = true)
     open var movieMagnetLinks: MutableSet<MovieMagnetLink> = mutableSetOf()
 
-    @ManyToMany
+    @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(
         name = "movie_tags",
         joinColumns = [JoinColumn(name = "fc2_id")],
@@ -34,7 +32,7 @@ open class Movie {
     )
     open var tags: MutableSet<Tag> = mutableSetOf()
 
-    @ManyToMany
+    @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(
         name = "preview_pictures_movie",
         joinColumns = [JoinColumn(name = "fc2_id")],
@@ -42,23 +40,11 @@ open class Movie {
     )
     open var previewPictures: MutableSet<PreviewPicture> = mutableSetOf()
 
-    @ManyToMany
+    @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(
         name = "sellers_movie",
         joinColumns = [JoinColumn(name = "fc2_id")],
         inverseJoinColumns = [JoinColumn(name = "seller_id")]
     )
     open var sellers: MutableSet<Seller> = mutableSetOf()
-
-    fun toDto(): MovieDto {
-        return MovieDto(
-            this.id,
-            this.title,
-            this.releaseDate,
-            this.movieMagnetLinks.map { it.toDto() }.toMutableSet(),
-            this.tags.map { it.toDto() }.toMutableSet(),
-            this.previewPictures.map { it.toDto() }.toMutableSet(),
-            this.sellers.map { it.toDto() }.toMutableSet()
-        )
-    }
 }

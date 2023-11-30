@@ -1,15 +1,19 @@
-package cn.zzwtsy.fc2service.domain.modle
+package cn.zzwtsy.fc2service.dao.entity
 
-import cn.zzwtsy.fc2service.dto.TagDto
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 
+@Comment("标签表，存储所有的标签")
 @Entity(name = "Tag")
-@Table(name = "tags")
+@Table(
+    name = "tags", schema = "fc2_service", indexes = [
+        Index(name = "tagName", columnList = "tag_name", unique = true)
+    ]
+)
 open class Tag {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("标签唯一标识ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     open var id: Int? = null
 
@@ -19,10 +23,4 @@ open class Tag {
 
     @ManyToMany(mappedBy = "tags")
     open var movies: MutableSet<Movie> = mutableSetOf()
-
-    fun toDto(): TagDto {
-        return TagDto(
-            this.tagName
-        )
-    }
 }

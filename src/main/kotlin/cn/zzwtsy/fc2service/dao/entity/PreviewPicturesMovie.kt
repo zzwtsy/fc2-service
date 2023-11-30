@@ -1,4 +1,4 @@
-package cn.zzwtsy.fc2service.domain.modle
+package cn.zzwtsy.fc2service.dao.entity
 
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
@@ -14,13 +14,13 @@ open class PreviewPicturesMovie {
     @EmbeddedId
     open var id: PreviewPicturesMovieId? = null
 
-    @MapsId
+    @MapsId("previewPicturesId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @Comment("演员ID")
     @JoinColumn(name = "preview_pictures_id", nullable = false)
     open var previewPicturesId: PreviewPicture? = null
 
-    @MapsId
+    @MapsId("fc2Id")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @Comment("FC2 视频ID")
     @JoinColumn(name = "fc2_id", nullable = false)

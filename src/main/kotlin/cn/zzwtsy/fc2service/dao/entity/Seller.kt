@@ -1,15 +1,15 @@
-package cn.zzwtsy.fc2service.domain.modle
+package cn.zzwtsy.fc2service.dao.entity
 
-import cn.zzwtsy.fc2service.dto.SellerDto
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 
+@Comment("导演表，存储所有的导演")
 @Entity(name = "Seller")
-@Table(name = "sellers")
+@Table(name = "sellers", schema = "fc2_service")
 open class Seller {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("导演唯一标识ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     open var id: Int? = null
 
@@ -19,10 +19,4 @@ open class Seller {
 
     @ManyToMany(mappedBy = "sellers")
     open var movies: MutableSet<Movie> = mutableSetOf()
-
-    fun toDto(): SellerDto {
-        return SellerDto(
-            this.name
-        )
-    }
 }

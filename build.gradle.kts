@@ -16,10 +16,11 @@ java {
 }
 
 repositories {
-    maven("https://maven.aliyun.com/repository/public/")
-    maven("https://maven.aliyun.com/repository/spring/")
     mavenLocal()
     mavenCentral()
+    maven("https://maven.aliyun.com/repository/public/")
+    maven("https://maven.aliyun.com/repository/spring/")
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 dependencies {
@@ -33,6 +34,8 @@ dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.0")
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.0")
+    // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+    implementation("net.coobird:thumbnailator:0.4.20")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.0.4")
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.0")
@@ -40,6 +43,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
     runtimeOnly("com.mysql:mysql-connector-j:8.0.32")
     testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
+    // 将 libs 文件夹下的 jar 添加到依赖
+    implementation(fileTree("libs") { include("*.jar") })
 }
 
 tasks.withType<KotlinCompile> {

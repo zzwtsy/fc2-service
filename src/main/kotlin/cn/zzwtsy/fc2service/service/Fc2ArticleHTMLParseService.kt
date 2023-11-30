@@ -1,9 +1,10 @@
 package cn.zzwtsy.fc2service.service
 
+import cn.zzwtsy.fc2service.dto.Fc2VideoInfoDto
 import org.jsoup.nodes.Document
 
 interface Fc2ArticleHTMLParseService {
-    fun parse(html: Document): String
+    fun parse(fc2Id: String): Fc2VideoInfoDto?
 
     /**
      * 获取标题

@@ -1,4 +1,4 @@
-package cn.zzwtsy.fc2service.domain.modle
+package cn.zzwtsy.fc2service.dao.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
@@ -28,6 +28,6 @@ open class PreviewPicturesMovieId : Serializable {
     }
 
     companion object {
-        private const val serialVersionUID = -534901333620578122L
+        private const val serialVersionUID = -33191466201182899L
     }
 }

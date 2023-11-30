@@ -1,15 +1,15 @@
-package cn.zzwtsy.fc2service.domain.modle
+package cn.zzwtsy.fc2service.dao.entity
 
-import cn.zzwtsy.fc2service.dto.PreviewPictureDto
 import jakarta.persistence.*
 import org.hibernate.annotations.Comment
 
+@Comment("演员表，存储所有的演员")
 @Entity(name = "Preview_Picture")
-@Table(name = "preview_pictures")
+@Table(name = "preview_pictures", schema = "fc2_service")
 open class PreviewPicture {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("演员唯一标识ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     open var id: Int? = null
 
@@ -19,10 +19,4 @@ open class PreviewPicture {
 
     @ManyToMany(mappedBy = "previewPictures")
     open var movies: MutableSet<Movie> = mutableSetOf()
-
-    fun toDto(): PreviewPictureDto {
-        return PreviewPictureDto(
-            this.previewPicture
-        )
-    }
 }
