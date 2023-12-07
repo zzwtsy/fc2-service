@@ -2,8 +2,6 @@ package cn.zzwtsy.fc2service.service
 
 import cn.zzwtsy.fc2service.api.Fc2Api
 import cn.zzwtsy.fc2service.domain.dto.Fc2VideoInfoDto
-import cn.zzwtsy.fc2service.domain.schema.Fc2VideoBaseInfos.fc2Id
-import cn.zzwtsy.fc2service.domain.schema.Fc2VideoBaseInfos.releaseDate
 import cn.zzwtsy.fc2service.utils.HttpUtil
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired

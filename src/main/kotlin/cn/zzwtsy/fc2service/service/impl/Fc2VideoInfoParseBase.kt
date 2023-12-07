@@ -3,7 +3,6 @@ package cn.zzwtsy.fc2service.service.impl
 import cn.zzwtsy.fc2service.domain.dto.MagnetLinksDto
 import cn.zzwtsy.fc2service.service.Fc2VideoInfoParseService
 import org.jsoup.nodes.Document
-import java.time.LocalDate
 
 abstract class Fc2VideoInfoParseBase : Fc2VideoInfoParseService {
     /**
@@ -49,7 +48,7 @@ abstract class Fc2VideoInfoParseBase : Fc2VideoInfoParseService {
     protected abstract fun getReleaseDate(html: Document): String
 
     /**
-     * 获取磁立链接
+     * 获取磁力链接
      * @param [fc2Id] fc2 id
      * @return [List<String>]
      */

@@ -1,7 +1,6 @@
 package cn.zzwtsy.fc2service.domain.dao
 
 import cn.zzwtsy.fc2service.domain.entity.Seller
-import cn.zzwtsy.fc2service.domain.schema.Fc2VideoBaseInfos.fc2Id
 import cn.zzwtsy.fc2service.domain.schema.Sellers
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.inList
