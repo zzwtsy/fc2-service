@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 object JsonUtil {
     private val objectMapper = ObjectMapper().apply {
         this.findAndRegisterModules()
-        propertyNamingStrategy = PropertyNamingStrategies.LOWER_CAMEL_CASE
+        this.propertyNamingStrategy = PropertyNamingStrategies.LOWER_CAMEL_CASE
     }
 
     fun <T> fromJson(json: String, clazz: Class<T>): T {

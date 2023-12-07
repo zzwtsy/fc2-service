@@ -2,6 +2,8 @@ package cn.zzwtsy.fc2service.utils
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import okhttp3.Headers
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 object Util {
@@ -22,8 +24,8 @@ object Util {
         )
     }
 
-    fun isFc2Id(fc2ID: String): Boolean {
-        return if (fc2ID.length != 7) {
+    fun isFc2Id(fc2ID: Int): Boolean {
+        return if (fc2ID.toString().length != 7) {
             logger.error { "Invalid FC2 ID: $fc2ID" }
             false
         } else {
@@ -34,7 +36,13 @@ object Util {
 
     fun getFc2VideoPageHeaders(): Headers {
         return Headers.headersOf(
-            "User-Agent", userAgent[Random().nextInt(userAgent.size)]
+            "User-Agent", userAgent[Random().nextInt(userAgent.size)],
+            "Cookie", "wei6H=1",
+            "Host", "adult.contents.fc2.com",
         )
+    }
+
+    fun String.toLocalDate(pattern: String = "yyyy-MM-dd"): LocalDate {
+        return LocalDate.parse(this, DateTimeFormatter.ofPattern(pattern))
     }
 }

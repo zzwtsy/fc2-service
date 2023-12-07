@@ -1,46 +1,38 @@
 package cn.zzwtsy.fc2service
 
-import cn.zzwtsy.fc2service.dao.entity.*
-import cn.zzwtsy.fc2service.dao.service.MovieService
+import cn.zzwtsy.fc2service.domain.dao.Fc2VideoBaseInfoDao
+import cn.zzwtsy.fc2service.domain.dto.Fc2VideoInfoDto
 import cn.zzwtsy.fc2service.service.GetFc2VideoInfo
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
+import kotlin.system.measureTimeMillis
 
 @SpringBootTest
 class Fc2ServiceApplicationTests {
-    @Autowired
-    lateinit var movieService: MovieService
+
     @Autowired
     lateinit var getFc2VideoInfo: GetFc2VideoInfo
 
+    @Autowired
+    private lateinit var fc2VideoBaseInfoDao: Fc2VideoBaseInfoDao
+
     @Test
     fun contextLoads() {
-        getFc2VideoInfo.getFc2VideoInfo()
-
-        // val movie = Movie().apply {
-        //     id = 5
-        //     this.title = "fc25"
-        //     this.releaseDate = LocalDate.now()
-        //     val item = this
-        //     this.movieMagnetLinks =
-        //         mutableSetOf(MovieMagnetLink().apply { this.magnetLink = "magnetLink5";this.movie = item })
-        //     this.sellers = mutableSetOf(Seller().apply { this.name = "seller5" })
-        //     this.tags = mutableSetOf(Tag().apply { this.tagName = "tag5" })
-        //     this.previewPictures = mutableSetOf(PreviewPicture().apply { this.previewPicture = "previewPicture5" })
-        // }
-        // movieService.insert(movie)
+        // val fc2VideoMagnetLinks = sukebeiNyaaHTMLParseService.getFc2VideoMagnetLinks("2763672")
+        var fc2VideoInfo: List<Fc2VideoInfoDto>
+        runBlocking {
+            val measureTimeMillis1 = measureTimeMillis { fc2VideoInfo = getFc2VideoInfo.getFc2VideoInfo() }
+            println("get data from api 耗时: $measureTimeMillis1 毫秒")
+            val measureTimeMillis = measureTimeMillis { fc2VideoBaseInfoDao.insertAll(fc2VideoInfo) }
+            println("insert data to db 耗时: $measureTimeMillis 毫秒")
+        }
     }
 }
 
-
-// fun main() {
-//     val url = "https://storage91000.contents.fc2.com/file/297/29683723/1700643250.58.jpg"
-//     // val url = "https://storage91000.contents.fc2.com/file/297/29683723/1700643250.22.gif"
-//     val bytes = HttpUtil.sendGet(url).body?.bytes()!!
-//     val toWebp = ImageConvertUtil.toWebp(bytes, 80)
-//     val outputFile = File("gif75.webp")
-//     outputFile.writeBytes(toWebp)
-//     println("写入文件成功")
-// }
+fun main() {
+    val date = LocalDate.parse("2023-12-09")
+    println(date.isAfter(LocalDate.now()))
+}

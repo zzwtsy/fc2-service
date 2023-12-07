@@ -21,15 +21,18 @@ class Fc2Api {
 
     // 定义 API_URL 常量
     private val apiBaseUrl = "https://adult.contents.fc2.com"
+
+    // https://adult.contents.fc2.com/article/2763672/
     private val apiArticleUrl = "${apiBaseUrl}/article"
     private val fc2NewVideosUrl = "${apiBaseUrl}/search/?sort=date&order=dsec&page="
 
 
     /**
      * 获取 FC2 视频页面 html 按日期由新至旧
+     * @param [pageNumber] 页数
      * @return [Document]
      */
-    fun getFc2VideoPageHtmlByDescDate(): Document? {
+    fun getFc2VideoPageHtmlByDescDate(pageNumber: Int = 1): Document? {
         val sendGet = HttpUtil.sendGet(fc2NewVideosUrl, headers = getFc2VideoPageHeaders())
         val body = sendGet.body
         if (!sendGet.isSuccessful || body == null) return null
@@ -41,7 +44,7 @@ class Fc2Api {
      * @param [fc2Id] FC2 ID
      * @return [Document]
      */
-    fun getFc2VideoPageHtmlByFc2Id(fc2Id: String): Document? {
+    fun getFc2VideoPageHtmlByFc2Id(fc2Id: Int): Document? {
         if (!Util.isFc2Id(fc2Id)) {
             return null
         }
@@ -55,6 +58,5 @@ class Fc2Api {
             null
         }
     }
-
 
 }

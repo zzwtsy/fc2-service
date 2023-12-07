@@ -32,13 +32,21 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:okhttp-brotli:4.11.0")
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.0")
-    // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.0")
+    // https://mvnrepository.com/artifact/org.ktorm/ktorm-core
+    implementation("org.ktorm:ktorm-core:3.6.0")
+    // https://mvnrepository.com/artifact/org.ktorm/ktorm-jackson
+    implementation("org.ktorm:ktorm-jackson:3.6.0")
+    // https://mvnrepository.com/artifact/org.ktorm/ktorm-support-mysql
+    implementation("org.ktorm:ktorm-support-mysql:3.6.0")
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-reactor
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
     // https://mvnrepository.com/artifact/net.coobird/thumbnailator
     implementation("net.coobird:thumbnailator:0.4.20")
 
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.0.4")
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.0")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:3.0.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
     runtimeOnly("com.mysql:mysql-connector-j:8.0.32")
