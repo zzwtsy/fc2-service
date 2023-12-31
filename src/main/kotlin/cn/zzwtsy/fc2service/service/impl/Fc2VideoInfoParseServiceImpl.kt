@@ -1,8 +1,8 @@
 package cn.zzwtsy.fc2service.service.impl
 
 import cn.zzwtsy.fc2service.api.Fc2Api
-import cn.zzwtsy.fc2service.domain.dto.Fc2VideoInfoDto
-import cn.zzwtsy.fc2service.domain.dto.MagnetLinksDto
+import cn.zzwtsy.fc2service.dto.Fc2VideoInfoDto
+import cn.zzwtsy.fc2service.dto.MagnetLinksDto
 import cn.zzwtsy.fc2service.service.SukebeiNyaaHTMLParseService
 import cn.zzwtsy.fc2service.utils.Util.toLocalDate
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -47,12 +47,17 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      * @param [fc2Id] FC2 ID
      * @return [String]
      */
-    override fun parse(fc2Id: Int): Fc2VideoInfoDto? {
-        val fc2videoHtml = fc2Api.getFc2VideoPageHtmlByFc2Id(fc2Id) ?: return null
+    override fun parse(fc2Id: Long): Fc2VideoInfoDto? {
+        val fc2videoHtml = fc2Api.getFc2VideoPageHtmlByFc2Id(fc2Id)
+        if (fc2videoHtml == null) {
+            logger.warn { "获取 $fc2Id 视频信息失败" }
+            return null
+        }
         val title = getTitle(fc2videoHtml)
         val releaseDate = getReleaseDate(fc2videoHtml).toLocalDate("yyyy/MM/dd")
         val seller = getSeller(fc2videoHtml)
         val cover = getCover(fc2videoHtml)
+        // 如果发布日期在今天之前，获取磁力链接
         val magnetLinks = if (releaseDate.isAfter(LocalDate.now())) getMagnetLinks(fc2Id) else emptyList()
         val previewPictures = getPreviewPictures(fc2videoHtml)
         val tags = getTags(fc2videoHtml)
@@ -173,7 +178,7 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
         }
     }
 
-    override fun getMagnetLinks(fc2Id: Int): List<MagnetLinksDto> {
+    override fun getMagnetLinks(fc2Id: Long): List<MagnetLinksDto> {
         return sukebeiNyaaHTMLParseService.getFc2VideoMagnetLinks(fc2Id)
     }
 }

@@ -1,7 +1,7 @@
 package cn.zzwtsy.fc2service.service
 
 import cn.zzwtsy.fc2service.api.SukebeiNyaaApi
-import cn.zzwtsy.fc2service.domain.dto.MagnetLinksDto
+import cn.zzwtsy.fc2service.dto.MagnetLinksDto
 import cn.zzwtsy.fc2service.utils.Util
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +18,7 @@ class SukebeiNyaaHTMLParseService {
     @Autowired
     private lateinit var sukebeiNyaaApi: SukebeiNyaaApi
 
-    fun getFc2VideoMagnetLinks(fc2Id: Int): List<MagnetLinksDto> {
+    fun getFc2VideoMagnetLinks(fc2Id: Long): List<MagnetLinksDto> {
         if (!Util.isFc2Id(fc2Id)) return emptyList()
         val document = sukebeiNyaaApi.searchByFc2Id(fc2Id) ?: return emptyList()
 
@@ -33,7 +33,11 @@ class SukebeiNyaaHTMLParseService {
             val isSubmitterTrusted = item.hasClass("success")
 
             val attr = item.selectXpath("td[3]/a[2]").attr("href")
-            val link = magnetLinkRegex.find(attr)?.value ?: continue
+            val link = magnetLinkRegex.find(attr)?.value
+            if (link.isNullOrEmpty()) {
+                logger.warn { "$fc2Id 找不到磁力链接:$link" }
+                continue
+            }
 
             magnetLinks.add(MagnetLinksDto(link, fileSize, isSubmitterTrusted))
         }

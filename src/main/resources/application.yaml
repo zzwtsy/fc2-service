@@ -11,9 +11,12 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.2.187:3306/fc2_service
-    username: root
-    password: mysql_AXXJRF
+    username: fc2_service
+    password: fc2_se@trx2mnsi
   servlet:
     multipart:
       max-file-size: 200MB
       max-request-size: 200MB
+jimmer:
+  language: kotlin
+  show-sql: true

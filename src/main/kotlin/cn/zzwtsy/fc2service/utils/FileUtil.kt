@@ -7,7 +7,7 @@ object FileUtil {
     private val logger = KotlinLogging.logger { }
 
     fun saveBinaryToFile(binaryData: ByteArray, filePath: String) {
-        val file = File("tmp/${filePath}")
+        val file = File("/image/${filePath}")
         file.createNewFolder()
         file.outputStream().use {
             runCatching {
@@ -21,7 +21,8 @@ object FileUtil {
     /**
      * 创建新文件夹
      */
-    fun File.createNewFolder() {
+    private fun File.createNewFolder() {
+        logger.info { this.parent }
         val parentFile = this.parentFile
         parentFile?.mkdirs()
     }

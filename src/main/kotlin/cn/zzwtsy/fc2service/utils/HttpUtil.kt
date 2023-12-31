@@ -58,7 +58,7 @@ object HttpUtil {
                     body.byteStream().let { bytes ->
                         val contentType = body.contentType()?.subtype
                         val outputStream = ByteArrayOutputStream()
-                        Thumbnails.of(bytes).outputQuality(0.81).toOutputStream(outputStream)
+                        Thumbnails.of(bytes).scale(1.0).outputQuality(0.81).toOutputStream(outputStream)
 
                         FileUtil.saveBinaryToFile(
                             outputStream.toByteArray(),

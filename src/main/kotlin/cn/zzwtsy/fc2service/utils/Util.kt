@@ -24,9 +24,9 @@ object Util {
         )
     }
 
-    fun isFc2Id(fc2ID: Int): Boolean {
+    fun isFc2Id(fc2ID: Long): Boolean {
         return if (fc2ID.toString().length != 7) {
-            logger.error { "Invalid FC2 ID: $fc2ID" }
+            logger.warn { "Invalid FC2 ID: $fc2ID" }
             false
         } else {
             logger.debug { "Valid FC2 ID: $fc2ID" }
@@ -44,5 +44,9 @@ object Util {
 
     fun String.toLocalDate(pattern: String = "yyyy-MM-dd"): LocalDate {
         return LocalDate.parse(this, DateTimeFormatter.ofPattern(pattern))
+    }
+
+    fun getNowDate(): LocalDate {
+        return LocalDate.now()
     }
 }

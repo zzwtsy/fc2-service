@@ -1,7 +1,7 @@
 package cn.zzwtsy.fc2service.service
 
 import cn.zzwtsy.fc2service.api.Fc2Api
-import cn.zzwtsy.fc2service.domain.dto.Fc2VideoInfoDto
+import cn.zzwtsy.fc2service.dto.Fc2VideoInfoDto
 import cn.zzwtsy.fc2service.utils.HttpUtil
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +21,7 @@ class GetFc2VideoInfo {
     @Autowired
     private lateinit var fc2VideoInfoParseService: Fc2VideoInfoParseService
 
-    suspend fun getFc2VideoInfo(): List<Fc2VideoInfoDto> {
+    fun getFc2VideoInfo(): List<Fc2VideoInfoDto> {
         val fc2IdList = getFc2NewIdList()
         val list = hashSetOf<Fc2VideoInfoDto>()
         for (fc2Id in fc2IdList) {
@@ -43,9 +43,13 @@ class GetFc2VideoInfo {
         return list.toList()
     }
 
-    private fun getFc2NewIdList(): List<Int> {
+    private fun getFc2NewIdList(): List<Long> {
         // 获取最新的 FC2 个视频, 当获取视频页面为 null 时返回空 List
-        val document = fc2Api.getFc2VideoPageHtmlByDescDate(2) ?: return emptyList()
+        val document = fc2Api.getFc2VideoPageHtmlByDescDate()
+        if (document == null) {
+            logger.warn { "获取最新的 FC2 个视频列表失败" }
+            return emptyList()
+        }
 
         return document.body().selectXpath(itemXpath).asSequence().filter { element ->
             element.select(itemFc2IdSelector).attr("href").startsWith("/article")
@@ -53,7 +57,7 @@ class GetFc2VideoInfo {
             val href = element.select(itemFc2IdSelector)
                 // /article/4023931/
                 .attr("href")
-            numberRegex.find(href)?.value?.toInt() ?: 0
-        }.distinct().filter { it != 0 }.toList()
+            numberRegex.find(href)?.value?.toLong() ?: 0L
+        }.distinct().filter { it != 0L }.toList()
     }
 }

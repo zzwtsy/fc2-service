@@ -22,7 +22,7 @@ class SukebeiNyaaApi {
         return SyndFeedInput().build(XmlReader(response))
     }
 
-    fun searchByFc2Id(fc2Id: Int): Document? {
+    fun searchByFc2Id(fc2Id: Long): Document? {
         return try {
             val response = HttpUtil.sendGet("${sukebeiNyaaSearchUrl}$fc2Id")
             if (!response.isSuccessful || response.body == null) return null

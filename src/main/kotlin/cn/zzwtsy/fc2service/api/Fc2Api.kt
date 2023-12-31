@@ -44,7 +44,7 @@ class Fc2Api {
      * @param [fc2Id] FC2 ID
      * @return [Document]
      */
-    fun getFc2VideoPageHtmlByFc2Id(fc2Id: Int): Document? {
+    fun getFc2VideoPageHtmlByFc2Id(fc2Id: Long): Document? {
         if (!Util.isFc2Id(fc2Id)) {
             return null
         }
