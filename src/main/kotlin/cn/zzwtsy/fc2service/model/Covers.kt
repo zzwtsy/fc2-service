@@ -20,6 +20,7 @@ interface Covers {
     val coverUrl: String
 
     @OneToOne
+    @Key
     val videoInfo: VideoInfo
 }
 

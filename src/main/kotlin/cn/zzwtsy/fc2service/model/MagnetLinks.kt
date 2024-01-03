@@ -14,9 +14,6 @@ interface MagnetLinks {
     )
     val id: Long
 
-    @IdView
-    val videoInfoId: Long
-
     /**
      * 磁力链接
      */
@@ -33,6 +30,7 @@ interface MagnetLinks {
     val isSubmitterTrusted: Boolean?
 
     @ManyToOne
+    @Key
     val videoInfo: VideoInfo
 }
 

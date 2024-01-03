@@ -1,6 +1,6 @@
 package cn.zzwtsy.fc2service.service.impl
 
-import cn.zzwtsy.fc2service.dto.MagnetLinksDto
+import cn.zzwtsy.fc2service.model.MagnetLinks
 import cn.zzwtsy.fc2service.service.Fc2VideoInfoParseService
 import org.jsoup.nodes.Document
 
@@ -52,5 +52,5 @@ abstract class Fc2VideoInfoParseBase : Fc2VideoInfoParseService {
      * @param [fc2Id] fc2 id
      * @return [List<String>]
      */
-    protected abstract fun getMagnetLinks(fc2Id: Long): List<MagnetLinksDto>
+    protected abstract fun getMagnetLinks(fc2Id: Long): List<MagnetLinks>
 }

@@ -1,8 +1,8 @@
 package cn.zzwtsy.fc2service.service
 
 import cn.zzwtsy.fc2service.api.SukebeiNyaaApi
-import cn.zzwtsy.fc2service.dto.MagnetLinksDto
-import cn.zzwtsy.fc2service.utils.Util
+import cn.zzwtsy.fc2service.model.MagnetLinks
+import cn.zzwtsy.fc2service.model.MagnetLinksDraft
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -18,8 +18,7 @@ class SukebeiNyaaHTMLParseService {
     @Autowired
     private lateinit var sukebeiNyaaApi: SukebeiNyaaApi
 
-    fun getFc2VideoMagnetLinks(fc2Id: Long): List<MagnetLinksDto> {
-        if (!Util.isFc2Id(fc2Id)) return emptyList()
+    fun getFc2VideoMagnetLinks(fc2Id: Long): List<MagnetLinks> {
         val document = sukebeiNyaaApi.searchByFc2Id(fc2Id) ?: return emptyList()
 
         // 判断当前 fc2 视频是否有磁力链接
@@ -27,7 +26,7 @@ class SukebeiNyaaHTMLParseService {
         if (noResultsFound.isNotEmpty()) return emptyList()
 
         val items = document.selectXpath(itemsXpath)
-        val magnetLinks = mutableSetOf<MagnetLinksDto>()
+        val result = mutableSetOf<MagnetLinks>()
         for (item in items) {
             val fileSize = item.selectXpath("td[4]").text()
             val isSubmitterTrusted = item.hasClass("success")
@@ -38,10 +37,17 @@ class SukebeiNyaaHTMLParseService {
                 logger.warn { "$fc2Id 找不到磁力链接:$link" }
                 continue
             }
+            val magnetLinks =
+                MagnetLinksDraft
+                    .MapStruct()
+                    .link(link)
+                    .fileSize(fileSize)
+                    .isSubmitterTrusted(isSubmitterTrusted)
+                    .build()
 
-            magnetLinks.add(MagnetLinksDto(link, fileSize, isSubmitterTrusted))
+            result.add(magnetLinks)
         }
 
-        return magnetLinks.toList()
+        return result.toList()
     }
 }

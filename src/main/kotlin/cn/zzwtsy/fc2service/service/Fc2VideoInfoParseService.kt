@@ -1,7 +1,7 @@
 package cn.zzwtsy.fc2service.service
 
-import cn.zzwtsy.fc2service.dto.Fc2VideoInfoDto
+import cn.zzwtsy.fc2service.model.VideoInfo
 
 interface Fc2VideoInfoParseService {
-    fun parse(fc2Id: Long): Fc2VideoInfoDto?
+    fun parse(fc2Id: Long): VideoInfo?
 }

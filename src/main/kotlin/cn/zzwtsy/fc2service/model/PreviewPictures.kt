@@ -20,6 +20,7 @@ interface PreviewPictures {
     val pictureUrl: String
 
     @ManyToOne
+    @Key
     val videoInfo: VideoInfo
 }
 

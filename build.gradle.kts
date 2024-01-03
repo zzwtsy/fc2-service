@@ -34,6 +34,8 @@ dependencies {
     implementation("org.babyfish.jimmer:jimmer-spring-boot-starter:${jimmerVersion}")
     implementation("org.springframework.boot:spring-boot-starter-web:3.1.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3")
     // 将 libs 文件夹下的 jar 添加到依赖
     implementation(fileTree("libs") { include("*.jar") })
 

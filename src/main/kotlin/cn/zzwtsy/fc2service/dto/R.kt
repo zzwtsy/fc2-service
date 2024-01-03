@@ -1,6 +1,6 @@
 package cn.zzwtsy.fc2service.dto
 
-import cn.zzwtsy.fc2service.enum.RCode
+import cn.zzwtsy.fc2service.enums.RCode
 import com.fasterxml.jackson.annotation.JsonInclude
 
 data class R<T>(

@@ -17,6 +17,7 @@ interface Tags {
     /**
      * 标签
      */
+    @Key
     val tag: String
 
     @ManyToMany(mappedBy = "tags")

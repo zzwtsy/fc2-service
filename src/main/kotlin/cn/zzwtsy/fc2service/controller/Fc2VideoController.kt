@@ -1,16 +1,15 @@
 package cn.zzwtsy.fc2service.controller
 
 import cn.zzwtsy.fc2service.dto.R
-import cn.zzwtsy.fc2service.enum.RCode
+import cn.zzwtsy.fc2service.enums.RCode
 import cn.zzwtsy.fc2service.model.VideoInfo
 import cn.zzwtsy.fc2service.repository.Fc2VideoInfoRepository
-import cn.zzwtsy.fc2service.utils.Util
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-@RestController
+@RestController("/api")
 class Fc2VideoController {
     @Autowired
     private lateinit var fc2VideoInfoRepository: Fc2VideoInfoRepository
@@ -32,9 +31,6 @@ class Fc2VideoController {
 
     @GetMapping("/getVideoInfoById")
     fun getVideoInfoById(@RequestParam fc2Id: Long): R<VideoInfo> {
-        if (!Util.isFc2Id(fc2Id)) {
-            return R.failure(RCode.PARAM_ERROR)
-        }
         val findByVideoId = fc2VideoInfoRepository.findByVideoId(fc2Id)
         return if (findByVideoId != null) {
             R.success(findByVideoId)

@@ -17,6 +17,7 @@ interface Sellers {
     /**
      * 销售者
      */
+    @Key
     val seller: String
 
     @ManyToMany(mappedBy = "sellers")
