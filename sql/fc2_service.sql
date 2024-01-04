@@ -1,4 +1,4 @@
--- 创建表：video_info
+-- 创建表: video_info
 CREATE TABLE video_info
 (
     video_id     INT UNSIGNED AUTO_INCREMENT COMMENT 'FC2 ID' PRIMARY KEY,
@@ -6,7 +6,7 @@ CREATE TABLE video_info
     release_date DATE         NOT NULL COMMENT '发布日期'
 );
 
--- 创建表：covers
+-- 创建表: covers
 CREATE TABLE covers
 (
     id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -18,7 +18,7 @@ CREATE TABLE covers
 CREATE INDEX covers_video_info_id_index ON covers (video_info_id);
 -- 对video_info_id字段创建索引
 
--- 创建表：magnet_links
+-- 创建表: magnet_links
 CREATE TABLE magnet_links
 (
     id                   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -30,28 +30,28 @@ CREATE TABLE magnet_links
 CREATE INDEX magnet_links_id_index ON magnet_links (id);
 -- 对id字段创建索引
 
--- 创建表：preview_pictures
+-- 创建表: preview_pictures
 CREATE TABLE preview_pictures
 (
     id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     picture_url VARCHAR(255) NOT NULL COMMENT '预览图片URL'
 );
 
--- 创建表：sellers
+-- 创建表: sellers
 CREATE TABLE sellers
 (
     id     INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     seller VARCHAR(50) NOT NULL COMMENT '销售者'
 );
 
--- 创建表：tags
+-- 创建表: tags
 CREATE TABLE tags
 (
     id  INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     tag VARCHAR(50) NOT NULL COMMENT '标签'
 );
 
--- 创建表：video_info_magnet_links_mapping
+-- 创建表: video_info_magnet_links_mapping
 CREATE TABLE video_info_magnet_links_mapping
 (
     video_info_id  INT UNSIGNED NOT NULL COMMENT '关联基础信息表的FC2 ID',
@@ -64,7 +64,7 @@ CREATE TABLE video_info_magnet_links_mapping
 CREATE INDEX video_info_magnet_links_mapping_video_info_id_index ON video_info_magnet_links_mapping (video_info_id);
 -- 对video_info_id字段创建索引
 
--- 创建表：video_info_preview_pictures_mapping
+-- 创建表: video_info_preview_pictures_mapping
 CREATE TABLE video_info_preview_pictures_mapping
 (
     video_info_id INT UNSIGNED NOT NULL COMMENT '关联基础信息表的FC2 ID',
@@ -77,7 +77,7 @@ CREATE TABLE video_info_preview_pictures_mapping
 CREATE INDEX video_info_preview_pictures_mapping_video_info_id_index ON video_info_preview_pictures_mapping (video_info_id);
 -- 对video_info_id字段创建索引
 
--- 创建表：video_info_sellers_mapping
+-- 创建表: video_info_sellers_mapping
 CREATE TABLE video_info_sellers_mapping
 (
     video_id  INT UNSIGNED NOT NULL COMMENT '关联基础信息表的FC2 ID',
@@ -90,7 +90,7 @@ CREATE TABLE video_info_sellers_mapping
 CREATE INDEX video_info_sellers_mapping_video_id_index ON video_info_sellers_mapping (video_id);
 -- 对video_id字段创建索引
 
--- 创建表：video_info_tags_mapping
+-- 创建表: video_info_tags_mapping
 CREATE TABLE video_info_tags_mapping
 (
     video_id INT UNSIGNED NOT NULL COMMENT '关联基础信息表的FC2 ID',
