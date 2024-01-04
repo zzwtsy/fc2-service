@@ -19,6 +19,7 @@ class SukebeiNyaaHTMLParseService {
     private lateinit var sukebeiNyaaApi: SukebeiNyaaApi
 
     fun getFc2VideoMagnetLinks(fc2Id: Long): List<MagnetLinks> {
+        logger.info { "开始获取 $fc2Id 视频的磁力链接" }
         val document = sukebeiNyaaApi.searchByFc2Id(fc2Id) ?: return emptyList()
 
         // 判断当前 fc2 视频是否有磁力链接

@@ -9,17 +9,21 @@ object JsonUtil {
         this.propertyNamingStrategy = PropertyNamingStrategies.LOWER_CAMEL_CASE
     }
 
-    fun <T> fromJson(json: String, clazz: Class<T>): T {
-        return objectMapper.readValue(json, clazz)
-    }
-
-    fun <T> toJson(obj: T): String {
-        return objectMapper.writeValueAsString(obj)
-    }
-
-    fun <T> toPrettyJson(obj: T): String {
+    fun getObjectMapper(): ObjectMapper {
         return objectMapper
+    }
+
+    inline fun <reified T> fromJson(json: String): T {
+        return this.getObjectMapper().readValue(json, T::class.java)
+    }
+
+    inline fun <reified T> toJson(): String {
+        return getObjectMapper().writeValueAsString(T::class.java)
+    }
+
+    inline fun <reified T> toPrettyJson(): String {
+        return getObjectMapper()
             .writerWithDefaultPrettyPrinter()
-            .writeValueAsString(obj)
+            .writeValueAsString(T::class.java)
     }
 }

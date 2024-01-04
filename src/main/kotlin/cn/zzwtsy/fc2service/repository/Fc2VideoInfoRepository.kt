@@ -3,12 +3,10 @@ package cn.zzwtsy.fc2service.repository
 import cn.zzwtsy.fc2service.model.*
 import org.babyfish.jimmer.spring.repository.KRepository
 import org.babyfish.jimmer.spring.repository.fetchPage
-import org.babyfish.jimmer.sql.kt.ast.expression.desc
-import org.babyfish.jimmer.sql.kt.ast.expression.eq
-import org.babyfish.jimmer.sql.kt.ast.expression.valueIn
-import org.babyfish.jimmer.sql.kt.ast.expression.valueNotIn
+import org.babyfish.jimmer.sql.kt.ast.expression.*
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 
 @Repository
 interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
@@ -63,6 +61,7 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
                     select(table.videoInfoId)
                 }
             )
+            where(table.releaseDate lt LocalDate.now())
             select(table.videoId)
         }.execute()
     }

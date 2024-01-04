@@ -3,7 +3,6 @@ package cn.zzwtsy.fc2service.utils
 import io.github.oshai.kotlinlogging.KotlinLogging
 import net.coobird.thumbnailator.Thumbnails
 import okhttp3.*
-import okhttp3.brotli.BrotliInterceptor
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -11,7 +10,7 @@ import java.util.concurrent.TimeUnit
 object HttpUtil {
     private val logger = KotlinLogging.logger { }
     private val client = OkHttpClient.Builder()
-        .addInterceptor(BrotliInterceptor)
+        // .addInterceptor(BrotliInterceptor)
         .connectTimeout(5, TimeUnit.SECONDS)
         .readTimeout(5, TimeUnit.SECONDS)
         .writeTimeout(5, TimeUnit.SECONDS)

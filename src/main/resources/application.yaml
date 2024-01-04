@@ -17,6 +17,9 @@ spring:
     multipart:
       max-file-size: 200MB
       max-request-size: 200MB
+  threads:
+    virtual:
+      enabled: true
 jimmer:
   language: kotlin
   show-sql: true
