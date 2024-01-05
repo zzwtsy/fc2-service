@@ -56,10 +56,12 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
      */
     fun queryVideoInfoMagnetLinksIsEmpty(): List<Long> {
         return sql.createQuery(VideoInfo::class) {
+            val predicates = subQuery(MagnetLinks::class) {
+                where(table.link.isNotNull())
+                select(table.link)
+            }.isNotNull()
             where(
-                table.videoId valueNotIn subQuery(MagnetLinks::class) {
-                    select(table.videoInfoId)
-                }
+                predicates
             )
             where(table.releaseDate lt LocalDate.now())
             select(table.videoId)

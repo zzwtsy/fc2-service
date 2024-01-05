@@ -17,6 +17,7 @@ interface MagnetLinks {
     /**
      * 磁力链接
      */
+    @Key
     val link: String
 
     /**
@@ -29,8 +30,7 @@ interface MagnetLinks {
      */
     val isSubmitterTrusted: Boolean?
 
-    @ManyToOne
-    @Key
-    val videoInfo: VideoInfo
+    @ManyToMany(mappedBy = "magnetLinks")
+    val videoInfo: List<VideoInfo>
 }
 

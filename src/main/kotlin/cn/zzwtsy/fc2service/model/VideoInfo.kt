@@ -31,15 +31,25 @@ interface VideoInfo {
     @OneToOne(mappedBy = "videoInfo")
     val covers: Covers?
 
-    @OneToMany(mappedBy = "videoInfo")
+    @ManyToMany
+    @JoinTable(
+        name = "video_info_magnet_links_mapping",
+        joinColumnName = "video_id",
+        inverseJoinColumnName = "magnet_link_id"
+    )
     val magnetLinks: List<MagnetLinks>
 
-    @OneToMany(mappedBy = "videoInfo")
+    @ManyToMany
+    @JoinTable(
+        name = "video_info_preview_pictures_mapping",
+        joinColumnName = "video_id",
+        inverseJoinColumnName = "picture_id"
+    )
     val previewPictures: List<PreviewPictures>
 
     @ManyToMany
     @JoinTable(
-        name = "video_sellers",
+        name = "video_info_sellers_mapping",
         joinColumnName = "video_id",
         inverseJoinColumnName = "seller_id"
     )
@@ -47,7 +57,7 @@ interface VideoInfo {
 
     @ManyToMany
     @JoinTable(
-        name = "video_tags",
+        name = "video_info_tags_mapping",
         joinColumnName = "video_id",
         inverseJoinColumnName = "tag_id"
     )

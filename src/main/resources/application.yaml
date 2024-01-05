@@ -10,9 +10,11 @@ spring:
     name: FC2Service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.2.187:3306/fc2_service
-    username: fc2_service
-    password: fc2_se@trx2mnsi
+    url: jdbc:mysql://192.168.2.187:3306/fc2_service_test
+    username: fc2_service_test
+    password: fc2_se@nmhta3tg
+  #    username: fc2_service
+  #    password: fc2_se@trx2mnsi
   servlet:
     multipart:
       max-file-size: 200MB

@@ -61,7 +61,7 @@ CREATE TABLE video_info_magnet_links_mapping
     FOREIGN KEY (magnet_link_id) REFERENCES magnet_links (id)     -- 外键关联到magnet_links表的id字段
 );
 
-CREATE INDEX video_info_magnet_links_mapping_video_info_id_index ON video_info_magnet_links_mapping (video_info_id);
+CREATE INDEX video_info_magnet_links_mapping_video_info_id_index ON video_info_magnet_links_mapping (video_id);
 -- 对video_info_id字段创建索引
 
 -- 创建表: video_info_preview_pictures_mapping
@@ -74,7 +74,7 @@ CREATE TABLE video_info_preview_pictures_mapping
     FOREIGN KEY (picture_id) REFERENCES preview_pictures (id)     -- 外键关联到preview_pictures表的id字段
 );
 
-CREATE INDEX video_info_preview_pictures_mapping_video_info_id_index ON video_info_preview_pictures_mapping (video_info_id);
+CREATE INDEX video_info_preview_pictures_mapping_video_info_id_index ON video_info_preview_pictures_mapping (video_id);
 -- 对video_info_id字段创建索引
 
 -- 创建表: video_info_sellers_mapping

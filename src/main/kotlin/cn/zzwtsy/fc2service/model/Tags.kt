@@ -23,4 +23,3 @@ interface Tags {
     @ManyToMany(mappedBy = "tags")
     val videoInfo: List<VideoInfo>
 }
-

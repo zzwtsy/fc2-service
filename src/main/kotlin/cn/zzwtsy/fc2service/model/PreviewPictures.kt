@@ -17,10 +17,10 @@ interface PreviewPictures {
     /**
      * 预览图片URL
      */
+    @Key
     val pictureUrl: String
 
-    @ManyToOne
-    @Key
-    val videoInfo: VideoInfo
+    @ManyToMany(mappedBy = "previewPictures")
+    val videoInfo: List<VideoInfo>
 }
 

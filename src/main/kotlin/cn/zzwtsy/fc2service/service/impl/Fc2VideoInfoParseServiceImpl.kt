@@ -1,10 +1,7 @@
 package cn.zzwtsy.fc2service.service.impl
 
 import cn.zzwtsy.fc2service.api.Fc2Api
-import cn.zzwtsy.fc2service.model.MagnetLinks
-import cn.zzwtsy.fc2service.model.VideoInfo
-import cn.zzwtsy.fc2service.model.addBy
-import cn.zzwtsy.fc2service.model.by
+import cn.zzwtsy.fc2service.model.*
 import cn.zzwtsy.fc2service.service.SukebeiNyaaHTMLParseService
 import cn.zzwtsy.fc2service.utils.Util.toLocalDate
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -77,27 +74,11 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
             this.videoId = fc2Id
             this.title = title
             this.releaseDate = releaseDate
-            this.sellers().addBy {
-                this.seller = seller
-            }
-            this.covers().apply { this.coverUrl = cover }
-            magnetLinks.forEach { item ->
-                this.magnetLinks().addBy {
-                    this.link = item.link
-                    this.fileSize = item.fileSize
-                    // this.videoInfoId = fc2Id
-                    this.isSubmitterTrusted = item.isSubmitterTrusted
-                }
-            }
-            previewPictures.forEach {
-                this.previewPictures().addBy {
-                    this.pictureUrl = it
-                    // this.videoInfoId = fc2Id
-                }
-            }
-            tags.forEach {
-                this.tags().addBy { this.tag = it }
-            }
+            this.sellers = seller
+            this.covers = cover
+            this.magnetLinks = magnetLinks
+            this.previewPictures = previewPictures
+            this.tags = tags
         }
 
         return videoInfo
@@ -123,21 +104,16 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      * @param [html] html
      * @return [List<String>]
      */
-    override fun getTags(html: Document): List<String> {
+    override fun getTags(html: Document): List<Tags> {
         return try {
-            val specialTag = mutableListOf<String>()
-            val tags = html.selectXpath(tagsXpath).map {
+            html.selectXpath(tagsXpath).flatMap {
                 val text = it.text()
-                if (text.length > 50) {
-                    specialTag.add(text)
-                    ""
-                } else {
-                    text
+                when {
+                    text.isEmpty() -> emptyList()
+                    text.length > 50 -> splitText(text).map { new(Tags::class).by { this.tag = it } }
+                    else -> listOf(new(Tags::class).by { this.tag = text })
                 }
-            }.filterNot { it.isEmpty() }.toMutableList()
-            val flatMap = specialTag.flatMap { splitText(it) }
-            tags.addAll(flatMap)
-            tags
+            }
         } catch (e: Exception) {
             logger.error(e) { "获取标签失败" }
             emptyList()
@@ -149,15 +125,17 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      * @param [html] html
      * @return [String]
      */
-    override fun getSeller(html: Document): String {
+    override fun getSeller(html: Document): List<Sellers> {
         return try {
             html.selectXpath(sellerXpath)
                 .filter { li -> li.text().contains("by") }
-                .map { it.select("li > a").text() }
-                .first()
+                .map {
+                    val seller = it.select("li > a").text()
+                    new(Sellers::class).by { this.seller = seller }
+                }
         } catch (e: Exception) {
             logger.error(e) { "获取卖家失败" }
-            ""
+            emptyList()
         }
     }
 
@@ -166,13 +144,13 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      * @param [html] html
      * @return [String]
      */
-    override fun getCover(html: Document): String {
+    override fun getCover(html: Document): Covers? {
         return try {
             val attr = html.selectXpath(coverXpath).attr("src")
-            "https:${attr}"
+            new(Covers::class).by { this.coverUrl = "https:${attr}" }
         } catch (e: Exception) {
             logger.error(e) { "获取封面失败" }
-            ""
+            null
         }
     }
 
@@ -181,17 +159,18 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      * @param [html] html
      * @return [List<String>]
      */
-    override fun getPreviewPictures(html: Document): List<String> {
+    override fun getPreviewPictures(html: Document): List<PreviewPictures> {
         return try {
             val selectXpath = html.selectXpath(previewPicturesXpath)
             selectXpath
                 .map {
                     val attr = it.select("a").attr("href")
-                    when {
+                    val url = when {
                         attr.startsWith("https") -> attr
                         attr.startsWith("http") -> attr
                         else -> "https:${attr}"
                     }
+                    new(PreviewPictures::class).by { this.pictureUrl = url }
                 }
         } catch (e: Exception) {
             logger.error(e) { "获取预览图片失败" }
@@ -229,7 +208,7 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
 
     private fun splitText(text: String): List<String> {
         return try {
-            text.split(",")
+            text.split(",").filter { it.isNotBlank() }
         } catch (e: Exception) {
             emptyList()
         }

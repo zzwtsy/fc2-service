@@ -3,7 +3,6 @@ package cn.zzwtsy.fc2service
 import cn.zzwtsy.fc2service.repository.Fc2VideoInfoRepository
 import cn.zzwtsy.fc2service.service.GetFc2VideoInfo
 import cn.zzwtsy.fc2service.task.Fc2VideoTask
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,11 +21,10 @@ class Fc2ServiceApplicationTests {
 
     @Test
     fun contextLoads() {
-        // configureProxy()
-        // handleVideoInfo()
-        runBlocking {
-            fc2VideoTask.executeGetVideoMagnetLinksTask()
-        }
+        configureProxy()
+        handleVideoInfo()
+        // val queryVideoInfoMagnetLinksIsEmpty = fc2VideoInfoRepository.queryVideoInfoMagnetLinksIsEmpty()
+        // println(queryVideoInfoMagnetLinksIsEmpty)
     }
 
     // 设置系统代理

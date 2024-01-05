@@ -62,9 +62,9 @@ class GetFc2VideoInfo {
             }
         }
 
-        CoroutineScope(Dispatchers.Default).launch {
-            saveImages(imagePathToUrl)
-        }
+        // CoroutineScope(Dispatchers.Default).launch {
+        //     saveImages(imagePathToUrl)
+        // }
 
         logger.info { "获取 FC2 视频信息成功，共 ${videoInfoSet.size} 个视频" }
         return videoInfoSet.toList()
@@ -78,7 +78,7 @@ class GetFc2VideoInfo {
      */
     private fun getFc2NewIdList(): List<Long> {
         // 获取最新的 FC2 个视频页面的 HTML
-        val documents = fc2Api.getMultipleFc2VideoPageHtmlByDescDate(5)
+        val documents = fc2Api.getMultipleFc2VideoPageHtmlByDescDate(1)
         // 如果获取页面为空，则记录警告并返回空列表
         if (documents == null) {
             logger.warn { "获取最新的 FC2 个视频列表失败" }
