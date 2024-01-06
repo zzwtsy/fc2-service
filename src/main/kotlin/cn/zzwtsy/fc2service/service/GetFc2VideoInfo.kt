@@ -1,10 +1,10 @@
 package cn.zzwtsy.fc2service.service
 
 import cn.zzwtsy.fc2service.api.Fc2Api
+import cn.zzwtsy.fc2service.api.model.Fc2ArticleRequestModel
 import cn.zzwtsy.fc2service.model.VideoInfo
 import cn.zzwtsy.fc2service.repository.Fc2VideoInfoRepository
 import cn.zzwtsy.fc2service.utils.HttpUtil
-import cn.zzwtsy.fc2service.utils.Util
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,9 +62,9 @@ class GetFc2VideoInfo {
             }
         }
 
-        // CoroutineScope(Dispatchers.Default).launch {
-        //     saveImages(imagePathToUrl)
-        // }
+        CoroutineScope(Dispatchers.Default).launch {
+            saveImages(imagePathToUrl)
+        }
 
         logger.info { "获取 FC2 视频信息成功，共 ${videoInfoSet.size} 个视频" }
         return videoInfoSet.toList()
@@ -77,23 +77,34 @@ class GetFc2VideoInfo {
      * @return 最新的 FC2 个视频列表的 ID 列表
      */
     private fun getFc2NewIdList(): List<Long> {
-        // 获取最新的 FC2 个视频页面的 HTML
-        val documents = fc2Api.getMultipleFc2VideoPageHtmlByDescDate(1)
-        // 如果获取页面为空，则记录警告并返回空列表
-        if (documents == null) {
-            logger.warn { "获取最新的 FC2 个视频列表失败" }
-            return emptyList()
+        logger.info { "开始获取最新的 FC2 个视频列表" }
+        val result = mutableListOf<Long>()
+        var pageIndex = 1
+        while (true) {
+            // 获取最新的 FC2 个视频页面的 HTML
+            val documents = fc2Api.getFc2VideoPageHtmlByDescDate(pageIndex)
+            // 如果获取页面为空，则记录警告并返回空列表
+            if (documents == null) {
+                logger.warn { "获取最新的 FC2 个视频列表失败" }
+                return result
+            }
+
+            // 处理每个页面的视频 ID
+            val ids = parserFc2NewVideoPage(documents)
+
+            // 查询并排除已存在的视频 ID
+            val idsExcluding = fc2VideoInfoRepository.queryVideoIdsExcluding(ids)
+            logger.info { "获取最新的 FC2 个视频列表成功，共 ${ids.size} 个视频，剩余 ${idsExcluding.size} 个视频" }
+
+            result.addAll(idsExcluding)
+            if (ids.size == idsExcluding.size) {
+                pageIndex++
+            } else {
+                break
+            }
         }
 
-        // 处理每个页面的视频 ID
-        val ids = documents.flatMap { parserFc2NewVideoPage(it) }
-
-        // 查询并排除已存在的视频 ID
-        val idsExcluding = fc2VideoInfoRepository.queryVideoIdsExcluding(ids)
-        // 记录获取视频列表成功的日志，并打印剩余视频数量
-        logger.info { "获取最新的 FC2 个视频列表成功，共 ${ids.size} 个视频，剩余 ${idsExcluding.size} 个视频" }
-
-        return idsExcluding
+        return result
     }
 
     /**
@@ -118,7 +129,7 @@ class GetFc2VideoInfo {
         return ids.distinct().filter { it != 0L }.toList()
     }
 
-    private fun saveImages(imageNameToUrl: Map<String, String>) {
+    private suspend fun saveImages(imageNameToUrl: Map<String, String>) {
         // 记录开始获取图片的日志
         logger.info { "开始获取图片" }
 
@@ -127,7 +138,7 @@ class GetFc2VideoInfo {
             filePathName.isNotEmpty() && url.startsWith("http")
         }.forEach { (filePathName, url) ->
             // 下载图片
-            HttpUtil.downloadImage(filePathName, url, Util.getFc2VideoPageHeaders())
+            HttpUtil.downloadImage(filePathName, url, Fc2ArticleRequestModel().toOkHttp3Headers())
         }
     }
 }

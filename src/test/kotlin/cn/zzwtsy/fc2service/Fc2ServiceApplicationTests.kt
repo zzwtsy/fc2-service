@@ -23,8 +23,7 @@ class Fc2ServiceApplicationTests {
     fun contextLoads() {
         configureProxy()
         handleVideoInfo()
-        // val queryVideoInfoMagnetLinksIsEmpty = fc2VideoInfoRepository.queryVideoInfoMagnetLinksIsEmpty()
-        // println(queryVideoInfoMagnetLinksIsEmpty)
+        // fc2VideoTask.executeGetVideoMagnetLinksTask()
     }
 
     // 设置系统代理

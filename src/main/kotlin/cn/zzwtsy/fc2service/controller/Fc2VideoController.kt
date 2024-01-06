@@ -16,13 +16,13 @@ class Fc2VideoController {
 
     @GetMapping("/getNewVideoInfoByDateDesc")
     fun getNewVideoInfoByDateDesc(
-        @RequestParam pageNumber: Int,
+        @RequestParam pageIndex: Int,
         @RequestParam pageSize: Int
     ): R<List<VideoInfo>> {
-        if (pageNumber < 0 || pageSize < 1) {
+        if (pageIndex < 0 || pageSize < 1) {
             return R.failure(RCode.PARAM_ERROR)
         }
-        val page = fc2VideoInfoRepository.queryVideoInfoByOrderByReleaseDateDesc(pageNumber, pageSize)
+        val page = fc2VideoInfoRepository.queryVideoInfoByOrderByReleaseDateDesc(pageIndex, pageSize)
         if (page.content.isEmpty()) {
             return R.failure(RCode.NO_DATA)
         }

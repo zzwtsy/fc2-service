@@ -1,16 +1,22 @@
 package cn.zzwtsy.fc2service.repository
 
-import cn.zzwtsy.fc2service.model.*
+import cn.zzwtsy.fc2service.model.VideoInfo
+import cn.zzwtsy.fc2service.model.fetchBy
+import cn.zzwtsy.fc2service.model.releaseDate
+import cn.zzwtsy.fc2service.model.videoId
 import org.babyfish.jimmer.spring.repository.KRepository
 import org.babyfish.jimmer.spring.repository.fetchPage
-import org.babyfish.jimmer.sql.kt.ast.expression.*
+import org.babyfish.jimmer.sql.kt.ast.expression.desc
+import org.babyfish.jimmer.sql.kt.ast.expression.eq
+import org.babyfish.jimmer.sql.kt.ast.expression.lt
+import org.babyfish.jimmer.sql.kt.ast.expression.valueIn
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
 interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
-    fun queryVideoInfoByOrderByReleaseDateDesc(pageNumber: Int, pageSize: Int): Page<VideoInfo> {
+    fun queryVideoInfoByOrderByReleaseDateDesc(pageIndex: Int, pageSize: Int): Page<VideoInfo> {
         return sql.createQuery(VideoInfo::class) {
             orderBy(table.releaseDate.desc())
             select(table.fetchBy {
@@ -19,7 +25,7 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
                     coverUrl()
                 }
             })
-        }.fetchPage(pageNumber, pageSize)
+        }.fetchPage(pageIndex, pageSize)
     }
 
     fun findByVideoId(videoId: Long): VideoInfo? {
@@ -56,15 +62,12 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
      */
     fun queryVideoInfoMagnetLinksIsEmpty(): List<Long> {
         return sql.createQuery(VideoInfo::class) {
-            val predicates = subQuery(MagnetLinks::class) {
-                where(table.link.isNotNull())
-                select(table.link)
-            }.isNotNull()
-            where(
-                predicates
-            )
             where(table.releaseDate lt LocalDate.now())
-            select(table.videoId)
-        }.execute()
+            select(table.fetchBy {
+                this.magnetLinks()
+            })
+        }.execute().filter {
+            it.magnetLinks.isEmpty()
+        }.map { it.videoId }
     }
 }
