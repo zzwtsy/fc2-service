@@ -12,11 +12,12 @@ CREATE TABLE covers
     id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     video_info_id INT UNSIGNED NOT NULL COMMENT '关联基础信息表的FC2 ID',
     cover_url     VARCHAR(255) NOT NULL COMMENT '封面图片URL',
-    FOREIGN KEY (video_info_id) REFERENCES video_info (video_id) -- 外键关联到video_info表的video_id字段
+    -- 外键关联到video_info表的video_id字段
+    FOREIGN KEY (video_info_id) REFERENCES video_info (video_id)
 );
 
-CREATE INDEX covers_video_info_id_index ON covers (video_info_id);
 -- 对video_info_id字段创建索引
+CREATE INDEX covers_video_info_id_index ON covers (video_info_id);
 
 -- 创建表: magnet_links
 CREATE TABLE magnet_links
@@ -27,8 +28,8 @@ CREATE TABLE magnet_links
     is_submitter_trusted TINYINT(1)  NOT NULL COMMENT '提交者是否可信'
 );
 
-CREATE INDEX magnet_links_id_index ON magnet_links (id);
 -- 对id字段创建索引
+CREATE INDEX magnet_links_id_index ON magnet_links (id);
 
 -- 创建表: preview_pictures
 CREATE TABLE preview_pictures

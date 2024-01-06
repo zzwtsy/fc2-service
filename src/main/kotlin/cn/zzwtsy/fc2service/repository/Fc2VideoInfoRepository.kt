@@ -16,7 +16,7 @@ import java.time.LocalDate
 
 @Repository
 interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
-    fun queryVideoInfoByOrderByReleaseDateDesc(pageIndex: Int, pageSize: Int): Page<VideoInfo> {
+    fun queryVideoInfoOrderByReleaseDateDesc(pageIndex: Int, pageSize: Int): Page<VideoInfo> {
         return sql.createQuery(VideoInfo::class) {
             orderBy(table.releaseDate.desc())
             select(table.fetchBy {

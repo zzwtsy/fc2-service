@@ -4,12 +4,11 @@ import cn.zzwtsy.fc2service.model.VideoInfo
 import cn.zzwtsy.fc2service.model.by
 import cn.zzwtsy.fc2service.repository.Fc2VideoInfoRepository
 import cn.zzwtsy.fc2service.repository.MagnetLinksRepository
-import cn.zzwtsy.fc2service.service.GetFc2VideoInfo
+import cn.zzwtsy.fc2service.service.Fc2VideoInfoService
 import cn.zzwtsy.fc2service.service.SukebeiNyaaHTMLParseService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.babyfish.jimmer.kt.new
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
@@ -18,7 +17,7 @@ class Fc2VideoTask {
     private val logger = KotlinLogging.logger {}
 
     @Autowired
-    private lateinit var getFc2VideoInfo: GetFc2VideoInfo
+    private lateinit var fc2VideoInfoService: Fc2VideoInfoService
 
     @Autowired
     private lateinit var magnetLinksRepository: MagnetLinksRepository
@@ -32,7 +31,7 @@ class Fc2VideoTask {
     // 每间隔 8 小时执行一次
     // @Scheduled(fixedDelay = 8, timeUnit = TimeUnit.HOURS)
     fun executeGetNewVideoInfoTask() {
-        val fc2VideoInfo = getFc2VideoInfo.getFc2VideoInfo()
+        val fc2VideoInfo = fc2VideoInfoService.getFc2VideoInfo()
         fc2VideoInfoRepository.saveAll(fc2VideoInfo)
     }
 

@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class GetFc2VideoInfo {
+class Fc2VideoInfoService {
     private val logger = KotlinLogging.logger { }
 
     private val itemXpath = "//*[@id=\"pjx-container\"]/div[2]/div[2]/section[2]/div[@class=\"c-cntCard-110-f\"]"

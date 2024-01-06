@@ -1,7 +1,7 @@
 package cn.zzwtsy.fc2service
 
 import cn.zzwtsy.fc2service.repository.Fc2VideoInfoRepository
-import cn.zzwtsy.fc2service.service.GetFc2VideoInfo
+import cn.zzwtsy.fc2service.service.Fc2VideoInfoService
 import cn.zzwtsy.fc2service.task.Fc2VideoTask
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 class Fc2ServiceApplicationTests {
 
     @Autowired
-    lateinit var getFc2VideoInfo: GetFc2VideoInfo
+    lateinit var fc2VideoInfoService: Fc2VideoInfoService
 
     @Autowired
     private lateinit var fc2VideoInfoRepository: Fc2VideoInfoRepository
@@ -37,7 +37,7 @@ class Fc2ServiceApplicationTests {
     // 获取和保存视频信息
     private fun handleVideoInfo() {
         try {
-            val fc2VideoInfo = getFc2VideoInfo.getFc2VideoInfo()
+            val fc2VideoInfo = fc2VideoInfoService.getFc2VideoInfo()
             fc2VideoInfoRepository.saveAll(fc2VideoInfo)
         } catch (e: Exception) {
             // 添加异常处理逻辑，例如打印异常信息或进行错误恢复

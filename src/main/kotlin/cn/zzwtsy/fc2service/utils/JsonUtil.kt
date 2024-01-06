@@ -14,16 +14,10 @@ object JsonUtil {
     }
 
     inline fun <reified T> fromJson(json: String): T {
-        return this.getObjectMapper().readValue(json, T::class.java)
+        return getObjectMapper().readValue(json, T::class.java)
     }
 
     inline fun <reified T> toJson(): String {
         return getObjectMapper().writeValueAsString(T::class.java)
-    }
-
-    inline fun <reified T> toPrettyJson(): String {
-        return getObjectMapper()
-            .writerWithDefaultPrettyPrinter()
-            .writeValueAsString(T::class.java)
     }
 }

@@ -22,7 +22,7 @@ class Fc2VideoController {
         if (pageIndex < 0 || pageSize < 1) {
             return R.failure(RCode.PARAM_ERROR)
         }
-        val page = fc2VideoInfoRepository.queryVideoInfoByOrderByReleaseDateDesc(pageIndex, pageSize)
+        val page = fc2VideoInfoRepository.queryVideoInfoOrderByReleaseDateDesc(pageIndex, pageSize)
         if (page.content.isEmpty()) {
             return R.failure(RCode.NO_DATA)
         }
