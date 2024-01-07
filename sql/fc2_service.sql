@@ -55,10 +55,10 @@ CREATE TABLE tags
 -- 创建表: video_info_magnet_links_mapping
 CREATE TABLE video_info_magnet_links_mapping
 (
-    video_info_id  INT UNSIGNED NOT NULL COMMENT '关联基础信息表的FC2 ID',
+    video_id  INT UNSIGNED NOT NULL COMMENT '关联基础信息表的FC2 ID',
     magnet_link_id INT UNSIGNED NOT NULL COMMENT '磁力链接ID',
-    PRIMARY KEY (video_info_id, magnet_link_id),
-    FOREIGN KEY (video_info_id) REFERENCES video_info (video_id), -- 外键关联到video_info表的video_id字段
+    PRIMARY KEY (video_id, magnet_link_id),
+    FOREIGN KEY (video_id) REFERENCES video_info (video_id), -- 外键关联到video_info表的video_id字段
     FOREIGN KEY (magnet_link_id) REFERENCES magnet_links (id)     -- 外键关联到magnet_links表的id字段
 );
 
@@ -68,10 +68,10 @@ CREATE INDEX video_info_magnet_links_mapping_video_info_id_index ON video_info_m
 -- 创建表: video_info_preview_pictures_mapping
 CREATE TABLE video_info_preview_pictures_mapping
 (
-    video_info_id INT UNSIGNED NOT NULL COMMENT '关联基础信息表的FC2 ID',
+    video_id INT UNSIGNED NOT NULL COMMENT '关联基础信息表的FC2 ID',
     picture_id    INT UNSIGNED NOT NULL COMMENT '预览图片ID',
-    PRIMARY KEY (video_info_id, picture_id),
-    FOREIGN KEY (video_info_id) REFERENCES video_info (video_id), -- 外键关联到video_info表的video_id字段
+    PRIMARY KEY (video_id, picture_id),
+    FOREIGN KEY (video_id) REFERENCES video_info (video_id), -- 外键关联到video_info表的video_id字段
     FOREIGN KEY (picture_id) REFERENCES preview_pictures (id)     -- 外键关联到preview_pictures表的id字段
 );
 
