@@ -13,7 +13,8 @@ import java.io.IOException
 @Component
 class SukebeiNyaaApi {
     private val logger = KotlinLogging.logger { }
-    private val baseUrl = "https://nyaa.yumdeb.top"
+    // private val baseUrl = "https://nyaa.yumdeb.top"
+    private val baseUrl = "https://sukebei.nyaa.si"
     private val sukebeiNyaaRssUrl = "${baseUrl}/?page=rss&q=FC2&c=2_2&f=2"
     private val sukebeiNyaaSearchUrl = "${baseUrl}/?q="
 

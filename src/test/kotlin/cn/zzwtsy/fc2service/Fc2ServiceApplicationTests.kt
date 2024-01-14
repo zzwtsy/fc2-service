@@ -1,17 +1,23 @@
 package cn.zzwtsy.fc2service
 
+import cn.zzwtsy.fc2service.api.model.Fc2ArticleRequestModel
 import cn.zzwtsy.fc2service.repository.Fc2VideoInfoRepository
 import cn.zzwtsy.fc2service.service.Fc2VideoInfoService
 import cn.zzwtsy.fc2service.task.Fc2VideoTask
+import cn.zzwtsy.fc2service.utils.HttpUtil
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 
 @SpringBootTest
 class Fc2ServiceApplicationTests {
 
     @Autowired
-    lateinit var fc2VideoInfoService: Fc2VideoInfoService
+    private lateinit var fc2VideoInfoService: Fc2VideoInfoService
 
     @Autowired
     private lateinit var fc2VideoInfoRepository: Fc2VideoInfoRepository
@@ -20,19 +26,14 @@ class Fc2ServiceApplicationTests {
     private lateinit var fc2VideoTask: Fc2VideoTask
 
     @Test
-    fun contextLoads() {
-        configureProxy()
-        handleVideoInfo()
-        // fc2VideoTask.executeGetVideoMagnetLinksTask()
+    fun contextLoads() = runBlocking {
+        // configureProxy()
+        // handleVideoInfo()
+        fc2VideoTask.executeGetVideoMagnetLinksTask()
+        // 延迟 10 分钟，以便测试任务执行完成
+        // delay(300000 / 2)
     }
 
-    // 设置系统代理
-    private fun configureProxy() {
-        System.setProperty("http.proxyHost", "127.0.0.1")
-        System.setProperty("http.proxyPort", "10809")
-        System.setProperty("https.proxyHost", "127.0.0.1")
-        System.setProperty("https.proxyPort", "10809")
-    }
 
     // 获取和保存视频信息
     private fun handleVideoInfo() {

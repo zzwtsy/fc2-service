@@ -10,7 +10,7 @@ plugins {
 
 group = "cn.zzwtsy"
 version = "0.0.1-SNAPSHOT"
-val jimmerVersion = "0.8.69"
+val jimmerVersion = "0.8.77"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -27,7 +27,8 @@ dependencies {
     implementation("org.jsoup:jsoup:1.16.2")
     implementation("com.rometools:rome:2.1.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:okhttp-brotli:4.12.0")
+    implementation("com.squareup.okhttp3:okhttp-brotli:5.0.0-alpha.12")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.0")
     implementation("net.coobird:thumbnailator:0.4.20")
     implementation("org.babyfish.jimmer:jimmer-spring-boot-starter:${jimmerVersion}")

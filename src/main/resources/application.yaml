@@ -26,4 +26,4 @@ spring:
       enabled: true
 jimmer:
   language: kotlin
-  show-sql: true
+  show-sql: false

@@ -37,6 +37,9 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
     private val tagsXpath = "//a[@class='tag tagTag']"
     private val fc2Regex = Regex("FC2-PPV-\\d+", RegexOption.IGNORE_CASE)
     private val dateRegex = Regex("\\d{4}/\\d{2}/\\d{2}")
+    private val notFoundVideo = listOf(
+        "没有发现您要找的商品", "お探しの商品が見つかりません", "Unable to find Product."
+    )
 
     @Autowired
     private lateinit var fc2Api: Fc2Api
@@ -56,17 +59,21 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
             return null
         }
         val title = getTitle(fc2videoHtml)
-        if (title == "お探しの商品が見つかりません") {
-            logger.error { "获取 $fc2Id 视频信息失败: 该视频已下架" }
+        if (notFoundVideo.contains(title)) {
+            logger.warn { "获取 $fc2Id 视频信息失败: 该视频已下架" }
             return null
         }
-        val releaseDate = getReleaseDate(fc2videoHtml)
-            .takeIf { it.isNotEmpty() }
-            ?.toLocalDate("yyyy/MM/dd") ?: return null
+        val date = getReleaseDate(fc2videoHtml)
+        val releaseDate = if (date.isNotEmpty()) date.toLocalDate("yyyy/MM/dd") else null
+
         val seller = getSeller(fc2videoHtml)
         val cover = getCover(fc2videoHtml)
         // 如果发布日期在今天之前，获取磁力链接
-        val magnetLinks = if (releaseDate.isAfter(LocalDate.now())) getMagnetLinks(fc2Id) else emptyList()
+        val magnetLinks = if (releaseDate != null && releaseDate.isAfter(LocalDate.now())) {
+            getMagnetLinks(fc2Id)
+        } else {
+            emptyList()
+        }
         val previewPictures = getPreviewPictures(fc2videoHtml)
         val tags = getTags(fc2videoHtml)
 
@@ -91,8 +98,7 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      */
     override fun getTitle(html: Document): String {
         return try {
-            html.selectXpath(titleXpath).text()
-                .replace(fc2Regex, "").trim()
+            html.selectXpath(titleXpath).text().replace(fc2Regex, "").trim()
         } catch (e: Exception) {
             logger.error(e) { "获取标题失败" }
             ""
@@ -106,11 +112,15 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      */
     override fun getTags(html: Document): List<Tags> {
         return try {
-            html.selectXpath(tagsXpath).flatMap {
-                val text = it.text()
+            html.selectXpath(tagsXpath).flatMap {element->
+                val text = element.text()
                 when {
                     text.isEmpty() -> emptyList()
-                    text.length > 50 -> splitText(text).map { new(Tags::class).by { this.tag = it } }
+                    // 判断是否包含多个标签
+                    text.contains(',') -> text.split(",")
+                        .filter { tag -> tag.isNotBlank() }
+                        .map { new(Tags::class).by { this.tag = it } }
+
                     else -> listOf(new(Tags::class).by { this.tag = text })
                 }
             }
@@ -127,12 +137,10 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      */
     override fun getSeller(html: Document): List<Sellers> {
         return try {
-            html.selectXpath(sellerXpath)
-                .filter { li -> li.text().contains("by") }
-                .map {
-                    val seller = it.select("li > a").text()
-                    new(Sellers::class).by { this.seller = seller }
-                }
+            html.selectXpath(sellerXpath).filter { li -> li.text().contains("by") }.map {
+                val seller = it.select("li > a").text()
+                new(Sellers::class).by { this.seller = seller }
+            }
         } catch (e: Exception) {
             logger.error(e) { "获取卖家失败" }
             emptyList()
@@ -146,7 +154,9 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      */
     override fun getCover(html: Document): Covers? {
         return try {
-            val attr = html.selectXpath(coverXpath).attr("src")
+            val attr = html.selectXpath(coverXpath)
+                .attr("src")
+                .replace(Regex("contents-thumbnail2\\.fc2\\.com/[a-z|A-Z\\d]+/"),"")
             new(Covers::class).by { this.coverUrl = "https:${attr}" }
         } catch (e: Exception) {
             logger.error(e) { "获取封面失败" }
@@ -162,16 +172,15 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
     override fun getPreviewPictures(html: Document): List<PreviewPictures> {
         return try {
             val selectXpath = html.selectXpath(previewPicturesXpath)
-            selectXpath
-                .map {
-                    val attr = it.select("a").attr("href")
-                    val url = when {
-                        attr.startsWith("https") -> attr
-                        attr.startsWith("http") -> attr
-                        else -> "https:${attr}"
-                    }
-                    new(PreviewPictures::class).by { this.pictureUrl = url }
+            selectXpath.map {
+                val attr = it.select("a").attr("href")
+                val url = when {
+                    attr.startsWith("https") -> attr
+                    attr.startsWith("http") -> attr
+                    else -> "https:${attr}"
                 }
+                new(PreviewPictures::class).by { this.pictureUrl = url }
+            }
         } catch (e: Exception) {
             logger.error(e) { "获取预览图片失败" }
             emptyList()
@@ -191,7 +200,13 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
                 val xpath = "//meta[@property=\"og:url\"]"
                 val elements = html.selectXpath(xpath)
                 val fc2Id = elements.attr("content")
-                logger.error { "$fc2Id 获取发布日期失败，原因：无法匹配日期" }
+                logger.error {
+                    """
+                    获取 $fc2Id 发布日期失败
+                    原因：无法匹配日期
+                    当前日期的 html：$text
+                    """.trimIndent()
+                }
                 ""
             } else {
                 dateString

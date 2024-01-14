@@ -9,6 +9,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Headers
 import org.jsoup.nodes.Document
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -38,8 +39,6 @@ class Fc2VideoInfoService {
                 val videoInfo = fc2VideoInfoParseService.parse(fc2Id)
                 if (videoInfo != null) {
                     videoInfoSet.add(videoInfo)
-                } else {
-                    logger.warn { "获取 $fc2Id 视频信息失败" }
                 }
             } catch (e: Exception) {
                 logger.warn { "获取 $fc2Id 视频信息时发生异常: ${e.message}" }
@@ -55,10 +54,10 @@ class Fc2VideoInfoService {
 
         videoInfoSet.forEach { info ->
             val releaseDate = info.releaseDate.toString().replace("-", "/")
-            imagePathToUrl["${releaseDate}/${info.videoId}"] = "${info.covers?.coverUrl}"
+            imagePathToUrl["${releaseDate}/${info.videoId}/cover"] = "${info.covers?.coverUrl}"
 
             info.previewPictures.forEachIndexed { index, picture ->
-                imagePathToUrl["${releaseDate}/${info.videoId}"] = "${picture.pictureUrl}_$index"
+                imagePathToUrl["${releaseDate}/${info.videoId}/previewPictures_$index"] = picture.pictureUrl
             }
         }
 
@@ -86,11 +85,15 @@ class Fc2VideoInfoService {
             // 如果获取页面为空，则记录警告并返回空列表
             if (documents == null) {
                 logger.warn { "获取最新的 FC2 个视频列表失败" }
-                return result
+                break
             }
 
             // 处理每个页面的视频 ID
             val ids = parserFc2NewVideoPage(documents)
+            if (ids.isEmpty()) {
+                logger.warn { "获取最新的 FC2 个视频列表失败，页面中没有视频" }
+                break
+            }
 
             // 查询并排除已存在的视频 ID
             val idsExcluding = fc2VideoInfoRepository.queryVideoIdsExcluding(ids)
@@ -132,13 +135,18 @@ class Fc2VideoInfoService {
     private suspend fun saveImages(imageNameToUrl: Map<String, String>) {
         // 记录开始获取图片的日志
         logger.info { "开始获取图片" }
+        val model = Fc2ArticleRequestModel()
+        val headers = Headers.headersOf(
+            "Cookie",model.cookie,
+            "User-Agent", model.userAgent,
+        )
 
         // 遍历imageNameToUrl中的每一对键值对
         imageNameToUrl.filter { (filePathName, url) ->
             filePathName.isNotEmpty() && url.startsWith("http")
         }.forEach { (filePathName, url) ->
             // 下载图片
-            HttpUtil.downloadImage(filePathName, url, Fc2ArticleRequestModel().toOkHttp3Headers())
+            HttpUtil.downloadImage(filePathName, url, headers)
         }
     }
 }

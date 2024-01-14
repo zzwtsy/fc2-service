@@ -63,8 +63,6 @@ class Fc2VideoTask {
                 }
             )
 
-            count++
-
             // 每获取50个视频的磁力链接，保存一次映射，并清空映射，暂停3秒
             if (count % 50 == 0 || count == magnetLinksEmpty.size) {
                 logger.info { "已获取 $count 个视频的磁力链接，正在保存..." }
@@ -76,11 +74,13 @@ class Fc2VideoTask {
                 logger.info { "保存磁力链接完成，正在等待3秒..." }
                 TimeUnit.SECONDS.sleep(3)
             }
+
+            count++
         }
-        logger.info { "获取磁力链接任务执行完毕" }
         if (videoInfos.isNotEmpty()) {
             saveMagnetLinks(videoInfos)
         }
+        logger.info { "获取磁力链接任务执行完毕" }
     }
 
     private fun saveMagnetLinks(videoInfos: List<VideoInfo>) {

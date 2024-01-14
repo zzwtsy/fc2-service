@@ -26,7 +26,7 @@ interface VideoInfo {
     /**
      * 发布日期
      */
-    val releaseDate: LocalDate
+    val releaseDate: LocalDate?
 
     @OneToOne(mappedBy = "videoInfo")
     val covers: Covers?
