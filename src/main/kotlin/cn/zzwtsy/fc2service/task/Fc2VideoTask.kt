@@ -9,6 +9,8 @@ import cn.zzwtsy.fc2service.service.SukebeiNyaaHTMLParseService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.babyfish.jimmer.kt.new
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.annotation.Async
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
@@ -29,13 +31,15 @@ class Fc2VideoTask {
     private lateinit var sukebeiNyaaHTMLParseService: SukebeiNyaaHTMLParseService
 
     // 每间隔 8 小时执行一次
-    // @Scheduled(fixedDelay = 8, timeUnit = TimeUnit.HOURS)
+    @Scheduled(fixedDelay = 8, timeUnit = TimeUnit.HOURS)
+    @Async
     fun executeGetNewVideoInfoTask() {
         val fc2VideoInfo = fc2VideoInfoService.getFc2VideoInfo()
         fc2VideoInfoRepository.saveAll(fc2VideoInfo)
     }
 
-    // @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.DAYS)
+    @Async
     fun executeGetVideoMagnetLinksTask() {
         // 检查视频信息中的磁力链接是否为空
         val magnetLinksEmpty = fc2VideoInfoRepository.queryVideoInfoMagnetLinksIsEmpty()

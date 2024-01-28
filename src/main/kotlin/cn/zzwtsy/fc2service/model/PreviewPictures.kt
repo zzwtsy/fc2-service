@@ -6,7 +6,7 @@ import org.babyfish.jimmer.sql.*
  * Entity for table "preview_pictures"
  */
 @Entity
-interface PreviewPictures {
+interface PreviewPictures : BaseEntity {
 
     @Id
     @GeneratedValue(

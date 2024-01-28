@@ -6,7 +6,7 @@ import org.babyfish.jimmer.sql.*
  * Entity for table "magnet_links"
  */
 @Entity
-interface MagnetLinks {
+interface MagnetLinks : BaseEntity {
 
     @Id
     @GeneratedValue(

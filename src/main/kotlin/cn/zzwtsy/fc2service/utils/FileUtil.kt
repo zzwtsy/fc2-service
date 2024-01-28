@@ -7,11 +7,23 @@ object FileUtil {
     private val logger = KotlinLogging.logger { }
 
     fun saveBinaryToFile(binaryData: ByteArray, filePath: String) {
-        val file = File("/image/${filePath}")
+        val file = File("./image/${filePath}")
         file.createNewFolder()
         file.outputStream().use {
             runCatching {
                 it.write(binaryData)
+            }.onFailure {
+                logger.error(it) { "Failed to save file: $filePath" }
+            }
+        }
+    }
+
+    fun saveTextToFile(text: String, filePath: String) {
+        val file = File(filePath)
+        file.createNewFolder()
+        file.outputStream().use {
+            runCatching {
+                it.write(text.toByteArray())
             }.onFailure {
                 logger.error(it) { "Failed to save file: $filePath" }
             }

@@ -6,7 +6,7 @@ import org.babyfish.jimmer.sql.*
  * Entity for table "tags"
  */
 @Entity
-interface Tags {
+interface Tags : BaseEntity {
 
     @Id
     @GeneratedValue(

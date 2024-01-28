@@ -17,7 +17,7 @@ object JsonUtil {
         return getObjectMapper().readValue(json, T::class.java)
     }
 
-    inline fun <reified T> toJson(): String {
-        return getObjectMapper().writeValueAsString(T::class.java)
+    fun <T> toJson(value: T): String {
+        return getObjectMapper().writeValueAsString(value)
     }
 }

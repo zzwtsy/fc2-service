@@ -4,14 +4,17 @@ import cn.zzwtsy.fc2service.api.model.Fc2ArticleRequestModel
 import cn.zzwtsy.fc2service.repository.Fc2VideoInfoRepository
 import cn.zzwtsy.fc2service.service.Fc2VideoInfoService
 import cn.zzwtsy.fc2service.task.Fc2VideoTask
-import cn.zzwtsy.fc2service.utils.HttpUtil
+import cn.zzwtsy.fc2service.utils.Fc2Headers
+import cn.zzwtsy.fc2service.utils.FileUtil
+import cn.zzwtsy.fc2service.utils.JsonUtil
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.util.concurrent.TimeUnit
-import kotlin.time.Duration
+
+private val logger = KotlinLogging.logger { }
 
 @SpringBootTest
 class Fc2ServiceApplicationTests {
@@ -27,13 +30,12 @@ class Fc2ServiceApplicationTests {
 
     @Test
     fun contextLoads() = runBlocking {
-        // configureProxy()
-        // handleVideoInfo()
-        fc2VideoTask.executeGetVideoMagnetLinksTask()
+        handleVideoInfo()
+        // fc2VideoTask.executeGetVideoMagnetLinksTask()
         // 延迟 10 分钟，以便测试任务执行完成
-        // delay(300000 / 2)
+        logger.info { "延迟 10 分钟，以便测试任务执行完成" }
+        delay(600000)
     }
-
 
     // 获取和保存视频信息
     private fun handleVideoInfo() {

@@ -7,7 +7,7 @@ import java.time.LocalDate
  * Entity for table "fc2_video_base_info"
  */
 @Entity
-interface VideoInfo {
+interface VideoInfo : BaseEntity {
 
     /**
      * FC2 ID

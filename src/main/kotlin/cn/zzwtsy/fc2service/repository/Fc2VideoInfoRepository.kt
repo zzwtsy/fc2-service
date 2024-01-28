@@ -20,7 +20,8 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
         return sql.createQuery(VideoInfo::class) {
             orderBy(table.releaseDate.desc())
             select(table.fetchBy {
-                this.allScalarFields()
+                this.title()
+                this.releaseDate()
                 this.covers {
                     coverUrl()
                 }
@@ -32,11 +33,17 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
         return sql.createQuery(VideoInfo::class) {
             where(table.videoId eq videoId)
             select(table.fetchBy {
-                allScalarFields()
-                previewPictures { allScalarFields() }
-                magnetLinks { allScalarFields() }
-                tags { allScalarFields() }
-                sellers { allScalarFields() }
+                this.title()
+                this.releaseDate()
+                covers { this.coverUrl() }
+                previewPictures { this.pictureUrl() }
+                magnetLinks {
+                    this.link()
+                    this.fileSize()
+                    this.isSubmitterTrusted()
+                }
+                tags { this.tag() }
+                sellers { this.seller() }
             })
         }.execute().firstOrNull()
     }
@@ -62,7 +69,7 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
      */
     fun queryVideoInfoMagnetLinksIsEmpty(): List<Long> {
         return sql.createQuery(VideoInfo::class) {
-            where(table.releaseDate lt LocalDate.now())
+            where(table.releaseDate lt LocalDate.now().plusDays(-2))
             select(table.fetchBy {
                 this.magnetLinks()
             })

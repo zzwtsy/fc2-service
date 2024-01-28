@@ -1,9 +1,9 @@
 package cn.zzwtsy.fc2service.service
 
 import cn.zzwtsy.fc2service.api.Fc2Api
-import cn.zzwtsy.fc2service.api.model.Fc2ArticleRequestModel
 import cn.zzwtsy.fc2service.model.VideoInfo
 import cn.zzwtsy.fc2service.repository.Fc2VideoInfoRepository
+import cn.zzwtsy.fc2service.utils.Fc2Headers
 import cn.zzwtsy.fc2service.utils.HttpUtil
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +63,8 @@ class Fc2VideoInfoService {
 
         CoroutineScope(Dispatchers.Default).launch {
             saveImages(imagePathToUrl)
+        }.invokeOnCompletion {
+            logger.info { "保存图片完成" }
         }
 
         logger.info { "获取 FC2 视频信息成功，共 ${videoInfoSet.size} 个视频" }
@@ -135,10 +137,9 @@ class Fc2VideoInfoService {
     private suspend fun saveImages(imageNameToUrl: Map<String, String>) {
         // 记录开始获取图片的日志
         logger.info { "开始获取图片" }
-        val model = Fc2ArticleRequestModel()
         val headers = Headers.headersOf(
-            "Cookie",model.cookie,
-            "User-Agent", model.userAgent,
+            "Cookie", Fc2Headers.cookie,
+            "User-Agent", Fc2Headers.userAgent,
         )
 
         // 遍历imageNameToUrl中的每一对键值对

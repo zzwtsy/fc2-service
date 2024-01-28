@@ -1,5 +1,6 @@
 package cn.zzwtsy.fc2service.utils
 
+import cn.zzwtsy.fc2service.interceptor.UpdateFc2CookieInterceptor
 import io.github.oshai.kotlinlogging.KotlinLogging
 import net.coobird.thumbnailator.Thumbnails
 import okhttp3.*
@@ -12,15 +13,16 @@ import java.util.concurrent.TimeUnit
 object HttpUtil {
     private val logger = KotlinLogging.logger { }
     private val client = OkHttpClient.Builder()
+        .addInterceptor(BrotliInterceptor)
+        .addInterceptor(UpdateFc2CookieInterceptor)
         .protocols(
             listOf(Protocol.HTTP_2, Protocol.HTTP_1_1)
         )
-        .addInterceptor(BrotliInterceptor)
-        .connectTimeout(5, TimeUnit.SECONDS)
-        .readTimeout(5, TimeUnit.SECONDS)
-        .writeTimeout(5, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
         .dispatcher(Dispatcher().apply {
-            maxRequests = 5
+            maxRequests = 2
             maxRequestsPerHost = 2
         })
         .build()
@@ -44,7 +46,7 @@ object HttpUtil {
      * @param [requestBody] 请求体
      * @return [Response]
      */
-    fun sendPost(url: String, headers: Headers?, requestBody: RequestBody): Response {
+    fun sendPost(url: String, headers: Headers? = null, requestBody: RequestBody): Response {
         val builder = Request.Builder().post(requestBody).url(url)
         val request = if (headers != null) builder.headers(headers).build() else builder.build()
         return client.newCall(request).execute()
@@ -80,8 +82,8 @@ object HttpUtil {
                     }
                     saveImage(body.byteStream(), contentType, filePathName)
                 } finally {
-                    response.close()
                     body.close()
+                    response.close()
                 }
             }
 
@@ -100,6 +102,7 @@ object HttpUtil {
                 Thumbnails.of(inputBytes).scale(1.0).outputFormat("JPEG").outputQuality(0.75)
                     .toOutputStream(outputStream)
             }
+
             else -> {
                 Thumbnails.of(inputBytes).scale(1.0).outputQuality(0.75).toOutputStream(outputStream)
             }

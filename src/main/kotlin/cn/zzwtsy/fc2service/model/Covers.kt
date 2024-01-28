@@ -6,7 +6,7 @@ import org.babyfish.jimmer.sql.*
  * Entity for table "covers"
  */
 @Entity
-interface Covers {
+interface Covers : BaseEntity {
 
     @Id
     @GeneratedValue(

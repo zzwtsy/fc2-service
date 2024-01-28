@@ -4,12 +4,13 @@ plugins {
     id("org.springframework.boot") version "3.2.1"
     id("io.spring.dependency-management") version "1.1.4"
     id("com.google.devtools.ksp") version "1.9.21-1.0.16"
+    id("com.bmuschko.docker-spring-boot-application") version "9.4.0"
     kotlin("jvm") version "1.9.21"
     kotlin("plugin.spring") version "1.9.21"
 }
 
 group = "cn.zzwtsy"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.2-SNAPSHOT"
 val jimmerVersion = "0.8.77"
 
 java {
@@ -27,6 +28,7 @@ dependencies {
     implementation("org.jsoup:jsoup:1.16.2")
     implementation("com.rometools:rome:2.1.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.squareup.okhttp3:okhttp-brotli:5.0.0-alpha.12")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("io.github.oshai:kotlin-logging-jvm:5.0.0")
@@ -51,6 +53,15 @@ dependencies {
 kotlin {
     sourceSets.main {
         kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+}
+
+docker {
+    url = "tcp://192.168.2.187:2375"
+    springBootApplication {
+        baseImage = "eclipse-temurin:21-jre-alpine"
+        maintainer = "zzwtsy"
+        ports.add(80)
     }
 }
 

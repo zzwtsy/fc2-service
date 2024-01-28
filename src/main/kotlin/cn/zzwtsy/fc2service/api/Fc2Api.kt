@@ -1,6 +1,6 @@
 package cn.zzwtsy.fc2service.api
 
-import cn.zzwtsy.fc2service.api.model.Fc2ArticleRequestModel
+import cn.zzwtsy.fc2service.utils.Fc2Headers
 import cn.zzwtsy.fc2service.utils.HttpUtil
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
@@ -25,7 +25,7 @@ class Fc2Api {
     private val apiArticleUrl = "${apiBaseUrl}/article"
     private val fc2NewVideosUrl = "${apiBaseUrl}/search/?sort=date&order=dsec&page="
 
-    private val headers = Fc2ArticleRequestModel().toOkHttp3Headers()
+    private val headers = Fc2Headers.toOkHttp3Headers()
 
     fun getLatestFc2VideoPageHtmlByDescDate(): Document? {
         return getFc2VideoPageHtmlByDescDate()
@@ -77,4 +77,5 @@ class Fc2Api {
             null
         }
     }
+
 }

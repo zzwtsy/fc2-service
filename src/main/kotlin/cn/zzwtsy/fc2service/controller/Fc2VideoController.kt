@@ -19,10 +19,10 @@ class Fc2VideoController {
         @RequestParam pageIndex: Int,
         @RequestParam pageSize: Int
     ): R<List<VideoInfo>> {
-        if (pageIndex < 0 || pageSize < 1) {
+        if (pageIndex < 1 || pageSize < 1) {
             return R.failure(RCode.PARAM_ERROR)
         }
-        val page = fc2VideoInfoRepository.queryVideoInfoOrderByReleaseDateDesc(pageIndex, pageSize)
+        val page = fc2VideoInfoRepository.queryVideoInfoOrderByReleaseDateDesc(pageIndex - 1, pageSize)
         if (page.content.isEmpty()) {
             return R.failure(RCode.NO_DATA)
         }
