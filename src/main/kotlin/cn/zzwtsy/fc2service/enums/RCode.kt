@@ -1,7 +1,7 @@
 package cn.zzwtsy.fc2service.enums
 
 /**
- * 函数…状态码和状态信息
+ * 状态码和状态信息
  *
  * @param code 状态码
  * @param msg 消息
@@ -25,6 +25,6 @@ enum class RCode(val code: Int, val msg: String) {
     // 状态码为403，消息为"禁止访问"
     FORBIDDEN(403, "禁止访问"),
 
-    // 状态码为204，消息为"无数据返回"
-    NO_DATA(204, "无数据返回"),
+    // 状态码为204，消息为"暂无数据"
+    NO_DATA(204, "暂无数据"),
 }
