@@ -112,14 +112,16 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      */
     override fun getTags(html: Document): List<Tags> {
         return try {
-            html.selectXpath(tagsXpath).flatMap {element->
+            html.selectXpath(tagsXpath).flatMap { element ->
                 val text = element.text()
                 when {
                     text.isEmpty() -> emptyList()
                     // 判断是否包含多个标签
-                    text.contains(',') -> text.split(",")
-                        .filter { tag -> tag.isNotBlank() }
-                        .map { new(Tags::class).by { this.tag = it } }
+                    text.contains(',') -> {
+                        text.split(",")
+                            .filter { tag -> tag.isNotBlank() }
+                            .map { new(Tags::class).by { this.tag = it } }
+                    }
 
                     else -> listOf(new(Tags::class).by { this.tag = text })
                 }
@@ -138,8 +140,17 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
     override fun getSeller(html: Document): List<Sellers> {
         return try {
             html.selectXpath(sellerXpath).filter { li -> li.text().contains("by") }.map {
-                val seller = it.select("li > a").text()
-                new(Sellers::class).by { this.seller = seller }
+                val a = it.select("li > a")
+                val seller = a.text()
+                val sellerWebSiteId = a
+                    // https://adult.contents.fc2.com/users/kakumei/
+                    .attr("href")
+                    .replace(Regex("https://.+?/users/"), "")
+                    .replace("/", "")
+                new(Sellers::class).by {
+                    this.seller = seller
+                    this.sellerWebSiteId = sellerWebSiteId
+                }
             }
         } catch (e: Exception) {
             logger.error(e) { "获取卖家失败" }
@@ -154,9 +165,8 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
      */
     override fun getCover(html: Document): Covers? {
         return try {
-            val attr = html.selectXpath(coverXpath)
-                .attr("src")
-                .replace(Regex("contents-thumbnail2\\.fc2\\.com/[a-z|A-Z\\d]+/"),"")
+            val attr = html.selectXpath(coverXpath).attr("src")
+                .replace(Regex("contents-thumbnail2\\.fc2\\.com/[a-z|A-Z\\d]+/"), "")
             new(Covers::class).by { this.coverUrl = "https:${attr}" }
         } catch (e: Exception) {
             logger.error(e) { "获取封面失败" }
@@ -219,13 +229,5 @@ class Fc2VideoInfoParseServiceImpl : Fc2VideoInfoParseBase() {
 
     override fun getMagnetLinks(fc2Id: Long): List<MagnetLinks> {
         return sukebeiNyaaHTMLParseService.getFc2VideoMagnetLinks(fc2Id)
-    }
-
-    private fun splitText(text: String): List<String> {
-        return try {
-            text.split(",").filter { it.isNotBlank() }
-        } catch (e: Exception) {
-            emptyList()
-        }
     }
 }

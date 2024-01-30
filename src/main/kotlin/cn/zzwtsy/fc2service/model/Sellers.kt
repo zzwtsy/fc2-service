@@ -20,6 +20,9 @@ interface Sellers : BaseEntity {
     @Key
     val seller: String
 
+    @Key
+    val sellerWebSiteId: String?
+
     @ManyToMany(mappedBy = "sellers")
     val videoInfo: List<VideoInfo>
 }
