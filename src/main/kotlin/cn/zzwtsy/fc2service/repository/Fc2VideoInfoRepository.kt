@@ -1,9 +1,6 @@
 package cn.zzwtsy.fc2service.repository
 
-import cn.zzwtsy.fc2service.model.VideoInfo
-import cn.zzwtsy.fc2service.model.fetchBy
-import cn.zzwtsy.fc2service.model.releaseDate
-import cn.zzwtsy.fc2service.model.videoId
+import cn.zzwtsy.fc2service.model.*
 import org.babyfish.jimmer.spring.repository.KRepository
 import org.babyfish.jimmer.spring.repository.fetchPage
 import org.babyfish.jimmer.sql.kt.ast.expression.desc
@@ -16,8 +13,40 @@ import java.time.LocalDate
 
 @Repository
 interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
-    fun queryVideoInfoOrderByReleaseDateDesc(pageIndex: Int, pageSize: Int): Page<VideoInfo> {
+    fun queryVideoInfoListOrderByReleaseDateDesc(pageIndex: Int, pageSize: Int): Page<VideoInfo> {
         return sql.createQuery(VideoInfo::class) {
+            orderBy(table.releaseDate.desc())
+            select(table.fetchBy {
+                this.title()
+                this.releaseDate()
+                this.covers {
+                    coverUrl()
+                }
+            })
+        }.fetchPage(pageIndex, pageSize)
+    }
+
+    fun queryVideoInfoListByTagsId(tagId: Long, pageIndex: Int, pageSize: Int): Page<VideoInfo> {
+        return sql.createQuery(VideoInfo::class) {
+            where(table.tags {
+                this.id.eq(tagId)
+            })
+            orderBy(table.releaseDate.desc())
+            select(table.fetchBy {
+                this.title()
+                this.releaseDate()
+                this.covers {
+                    coverUrl()
+                }
+            })
+        }.fetchPage(pageIndex, pageSize)
+    }
+
+    fun queryVideoInfoByListBySellerId(sellerId: Long, pageIndex: Int, pageSize: Int): Page<VideoInfo> {
+        return sql.createQuery(VideoInfo::class) {
+            where(table.sellers {
+                this.id.eq(sellerId)
+            })
             orderBy(table.releaseDate.desc())
             select(table.fetchBy {
                 this.title()
