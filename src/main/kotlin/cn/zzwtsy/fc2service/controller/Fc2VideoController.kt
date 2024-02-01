@@ -34,7 +34,7 @@ class Fc2VideoController {
 
     @GetMapping("/getVideoInfoById")
     fun getVideoInfoById(@RequestParam(required = true) fc2Id: Long): R<VideoInfo> {
-        val videoInfo = fc2VideoInfoRepository.findByVideoId(fc2Id)
+        val videoInfo = fc2VideoInfoRepository.findVideoInfoByVideoId(fc2Id)
         return if (videoInfo != null) {
             R.success(videoInfo)
         } else {
