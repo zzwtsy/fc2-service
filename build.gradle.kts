@@ -44,7 +44,7 @@ dependencies {
     runtimeOnly("com.mysql:mysql-connector-j:8.2.0")
 
     ksp("org.babyfish.jimmer:jimmer-ksp:${jimmerVersion}")
-    testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.0")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.2.1")
 }
 
 // 将 jimmer 生成的代码添加到编译路径中。
