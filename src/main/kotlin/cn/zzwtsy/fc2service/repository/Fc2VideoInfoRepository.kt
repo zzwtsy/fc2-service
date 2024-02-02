@@ -30,13 +30,13 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
                 this.covers {
                     coverUrl()
                 }
+                this.magnetLinks()
             })
         }.fetchPage(pageIndex, pageSize)
 
         // 返回视频信息列表
         return list
     }
-
 
     /**
      * 根据标签ID查询视频信息列表
@@ -59,6 +59,7 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
                 this.covers {
                     coverUrl()
                 }
+                this.magnetLinks()
             })
         }.fetchPage(pageIndex, pageSize)
 
@@ -75,21 +76,22 @@ interface Fc2VideoInfoRepository : KRepository<VideoInfo, Long> {
      * @param pageSize 每页数量
      * @return 查询结果的分页对象
      */
-    fun queryVideoInfoByListBySellerId(sellerId: Long, pageIndex: Int, pageSize: Int): Page<VideoInfo> {
+    fun queryVideoInfoByListBySellerId(
+        sellerId: Long,
+        pageIndex: Int,
+        pageSize: Int
+    ): Page<VideoInfo> {
         return sql.createQuery(VideoInfo::class) {
-            where(table.sellers {
-                this.id.eq(sellerId)
-            })
+            where(table.sellers { this.id eq sellerId })
             orderBy(table.releaseDate.desc())
-            select(table.fetchBy { this.sellers { this.seller() } })
             select(table.fetchBy {
                 this.title()
                 this.releaseDate()
                 this.covers { coverUrl() }
+                this.magnetLinks()
             })
         }.fetchPage(pageIndex, pageSize)
     }
-
 
     /**
      * 根据视频ID查找视频信息
