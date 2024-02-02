@@ -19,8 +19,15 @@ class Fc2VideoInfoService {
     private val logger = KotlinLogging.logger { }
 
     private val itemXpath = "//*[@id=\"pjx-container\"]/div[2]/div[2]/section[2]/div[@class=\"c-cntCard-110-f\"]"
+    private val titleXpath = "/html/head/title"
     private val itemFc2IdSelector = ".c-cntCard-110-f_thumb > a"
     private val numberRegex = "\\d+".toRegex()
+    private val loginTitle = listOf(
+        "登录 FC2 - 免费主页 访问分析 博客 服务器租赁 SEO对策 等 -",
+        "登入 FC2 - 免費主頁 訪問分析 部落格 伺服器租賃 SEO對策 等 -",
+        "Log in  FC2 - Free Website Access Analysis Blog Rental Server SEO Countermeasures etc. -",
+        "ログイン　FC2 - 無料ホームページ アクセス解析 ブログ レンタルサーバー SEO 対策 等 -"
+    )
 
     @Autowired
     private lateinit var fc2Api: Fc2Api
@@ -87,6 +94,10 @@ class Fc2VideoInfoService {
             // 如果获取页面为空，则记录警告并返回空列表
             if (documents == null) {
                 logger.warn { "获取最新的 FC2 个视频列表失败" }
+                break
+            }
+            if (documents.selectXpath(titleXpath).text() in loginTitle) {
+                logger.warn { "获取最新的 FC2 个视频列表失败，网站需要登录" }
                 break
             }
 
