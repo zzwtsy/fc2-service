@@ -28,7 +28,7 @@ class Fc2VideoController {
         return if (videoInfoPage.content.isEmpty()) {
             R.failure(RCode.NO_DATA)
         } else {
-            R.success(videoInfoPage.content, videoInfoPage.totalPages)
+            R.success(videoInfoPage.content, videoInfoPage.totalElements)
         }
     }
 
@@ -55,7 +55,7 @@ class Fc2VideoController {
         return if (videoInfoPage.content.isEmpty()) {
             R.failure(RCode.NO_DATA)
         } else {
-            R.success(videoInfoPage.content, videoInfoPage.totalPages)
+            R.success(videoInfoPage.content, videoInfoPage.totalElements)
         }
     }
 
@@ -72,7 +72,7 @@ class Fc2VideoController {
         return if (videoInfoPage.content.isEmpty()) {
             R.failure(RCode.NO_DATA)
         } else {
-            R.success(videoInfoPage.content, videoInfoPage.totalPages)
+            R.success(videoInfoPage.content, videoInfoPage.totalElements)
         }
     }
 }
