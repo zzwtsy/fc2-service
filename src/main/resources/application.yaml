@@ -27,3 +27,6 @@ spring:
 jimmer:
   language: kotlin
   show-sql: false
+  client:
+    ts:
+      path: /ts.zip
